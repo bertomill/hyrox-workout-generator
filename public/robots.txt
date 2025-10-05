@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hyrox-workout-generator-roan.vercel.app/sitemap.xml

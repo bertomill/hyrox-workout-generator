@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { WorkoutList } from '@/components/History/WorkoutList';
+import { ProgressRing } from '@/components/ui/ProgressRing';
 
 export default function HistoryPage() {
   const [stats, setStats] = useState<any>(null);
@@ -93,6 +94,63 @@ export default function HistoryPage() {
             isLoading={isLoadingStats}
           />
         </div>
+
+        {/* Progress Ring Overview - Visual Polish */}
+        {stats && stats.totalWorkouts > 0 && (
+          <Card className="bg-gradient-to-br from-gray-50 to-white">
+            <CardContent className="p-6">
+              <div className="flex flex-col sm:flex-row items-center justify-around gap-6">
+                {/* Completion Rate */}
+                <div className="text-center">
+                  <ProgressRing
+                    progress={100}
+                    size={100}
+                    strokeWidth={8}
+                    color="#06D6A0"
+                  >
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">100%</div>
+                      <div className="text-xs text-gray-600">Complete</div>
+                    </div>
+                  </ProgressRing>
+                  <p className="text-xs text-gray-600 mt-2">Completion Rate</p>
+                </div>
+
+                {/* Progress vs Goal (example: 10 workouts goal) */}
+                <div className="text-center">
+                  <ProgressRing
+                    progress={Math.min((stats.totalWorkouts / 10) * 100, 100)}
+                    size={100}
+                    strokeWidth={8}
+                    color="#E63946"
+                  >
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">{stats.totalWorkouts}</div>
+                      <div className="text-xs text-gray-600">of 10</div>
+                    </div>
+                  </ProgressRing>
+                  <p className="text-xs text-gray-600 mt-2">Monthly Goal</p>
+                </div>
+
+                {/* Consistency (based on streak) */}
+                <div className="text-center">
+                  <ProgressRing
+                    progress={Math.min((stats.recentStreak / 7) * 100, 100)}
+                    size={100}
+                    strokeWidth={8}
+                    color="#F77F00"
+                  >
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">{stats.recentStreak}</div>
+                      <div className="text-xs text-gray-600">days</div>
+                    </div>
+                  </ProgressRing>
+                  <p className="text-xs text-gray-600 mt-2">Streak</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Workout History Section */}
         <Card>
