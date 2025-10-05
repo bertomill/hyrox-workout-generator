@@ -23,6 +23,25 @@ import { FitnessLevel } from '@/lib/types';
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check if database connection is available
+    if (!process.env.DATABASE_URL) {
+      console.error('DATABASE_URL is not configured');
+      return NextResponse.json(
+        { 
+          error: 'Database configuration missing',
+          details: 'DATABASE_URL environment variable is not set'
+        },
+        { 
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
+      );
+    }
+
     // Parse request body
     const body = await request.json();
     const { fitnessLevel, userId = 1 } = body;
@@ -33,7 +52,14 @@ export async function POST(request: NextRequest) {
         { 
           error: 'Invalid fitness level. Must be: beginner, intermediate, or advanced' 
         },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
       );
     }
 
@@ -68,7 +94,14 @@ export async function POST(request: NextRequest) {
         status: workout.status,
         createdAt: workout.created_at,
       },
-    }, { status: 201 });
+    }, { 
+      status: 201,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    });
 
   } catch (error) {
     console.error('Error generating workout:', error);
@@ -78,9 +111,30 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate workout',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      }
     );
   }
+}
+
+/**
+ * OPTIONS handler for CORS preflight requests
+ */
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }
 
 /**

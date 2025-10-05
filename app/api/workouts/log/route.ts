@@ -28,6 +28,25 @@ import { PerformanceData } from '@/lib/types';
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check if database connection is available
+    if (!process.env.DATABASE_URL) {
+      console.error('DATABASE_URL is not configured');
+      return NextResponse.json(
+        { 
+          error: 'Database configuration missing',
+          details: 'DATABASE_URL environment variable is not set'
+        },
+        { 
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
+      );
+    }
+
     // Parse request body
     const body = await request.json();
     const { workoutId, userId = 1, performanceData, notes = null } = body;
@@ -90,7 +109,7 @@ export async function POST(request: NextRequest) {
       console.warn(`Workout ${workoutId} not found during status update`);
     }
 
-    // Return success response with logged workout data ^
+    // Return success response with logged workout data
     return NextResponse.json({
       success: true,
       message: 'Workout logged successfully!',
@@ -104,7 +123,14 @@ export async function POST(request: NextRequest) {
         notes: workoutLog.notes,
         createdAt: workoutLog.created_at,
       },
-    }, { status: 201 });
+    }, { 
+      status: 201,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    });
 
   } catch (error) {
     console.error('Error logging workout:', error);
@@ -114,9 +140,30 @@ export async function POST(request: NextRequest) {
         error: 'Failed to log workout',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      }
     );
   }
+}
+
+/**
+ * OPTIONS handler for CORS preflight requests
+ */
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }
 
 /**
