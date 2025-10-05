@@ -169,15 +169,7 @@ Transform the app into **Roxify** - a smart, social, and adaptive Hyrox training
 
 ### **SESSION 7: Mobile Polish** (Est. 2 hours) - FUTURE
 
-#### Phase 8: PWA Enhancements
-- [ ] Generate PNG icons from SVG templates
-- [ ] Add splash screens
-- [ ] Implement service worker
-- [ ] Offline mode
-- [ ] Dark mode toggle
-- [ ] Push notification setup
-- [ ] Timer/stopwatch component
-- [ ] Commit: "Complete PWA setup with offline support"
+
 
 ---
 
