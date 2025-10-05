@@ -28,13 +28,17 @@ import { PerformanceData } from '@/lib/types';
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check if database connection is available
-    if (!process.env.DATABASE_URL) {
-      console.error('DATABASE_URL is not configured');
+    // Check if any database connection string is available
+    const hasDbConfig = process.env.DATABASE_URL || 
+                        process.env.POSTGRES_URL_NON_POOLING || 
+                        process.env.POSTGRES_URL;
+    
+    if (!hasDbConfig) {
+      console.error('No database configuration found');
       return NextResponse.json(
         { 
           error: 'Database configuration missing',
-          details: 'DATABASE_URL environment variable is not set'
+          details: 'No database connection string found in environment variables'
         },
         { 
           status: 500,
