@@ -1,13 +1,14 @@
 /**
  * AI-Powered Workout Generator (SESSION 2 Enhancement)
  * 
- * Uses OpenAI to generate truly adaptive, intelligent Hyrox workouts
+ * Uses Vercel AI Gateway with OpenAI to generate truly adaptive, intelligent Hyrox workouts
  * based on user's mood, intensity, fitness level, and preferences.
  * 
  * Falls back to rule-based generation if AI fails.
  */
 
-import OpenAI from 'openai';
+import { generateObject } from 'ai';
+import { openai } from '@ai-sdk/openai';
 import { 
   WorkoutDetails, 
   FitnessLevel, 
@@ -19,24 +20,41 @@ import {
   Station,
   Run
 } from './types';
+import { z } from 'zod';
 
 /**
- * Generate workout using OpenAI
+ * Zod schema for AI workout response
+ */
+const workoutSchema = z.object({
+  stations: z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    distance: z.string().optional(),
+    weight: z.string().optional(),
+    reps: z.string().optional(),
+    order: z.number(),
+  })),
+  runs: z.array(z.object({
+    id: z.number(),
+    distance: z.string(),
+    order: z.number(),
+  })),
+  coachingNotes: z.string().optional(),
+});
+
+/**
+ * Generate workout using Vercel AI Gateway + OpenAI
  */
 export async function generateWorkoutWithAI(
   fitnessLevel: FitnessLevel,
   userId: string,
   params?: Partial<WorkoutGenerationParams>
 ): Promise<WorkoutDetails | null> {
-  // Check if OpenAI API key is configured
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn('OPENAI_API_KEY not configured, falling back to rule-based generation');
+  // Check if Vercel AI Gateway API key is configured
+  if (!process.env.VERCEL_AI_GATEWAY_API_KEY) {
+    console.warn('VERCEL_AI_GATEWAY_API_KEY not configured, falling back to rule-based generation');
     return null;
   }
-
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
 
   // Extract parameters
   const mood = params?.mood || 'normal';
@@ -48,35 +66,24 @@ export async function generateWorkoutWithAI(
   const prompt = buildWorkoutPrompt(fitnessLevel, mood, intensity, duration, excludeStations);
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: `You are an expert Hyrox trainer and workout designer. You create personalized, safe, and effective Hyrox workouts based on the athlete's current state and goals. Always follow official Hyrox standards but adapt for the athlete's level and condition.`
+    // Use Vercel AI SDK with gateway
+    const { object } = await generateObject({
+      model: openai('gpt-4o-mini', {
+        // Use Vercel AI Gateway
+        headers: {
+          'Authorization': `Bearer ${process.env.VERCEL_AI_GATEWAY_API_KEY}`,
         },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
-      max_tokens: 2000,
+      }),
+      schema: workoutSchema,
+      prompt: prompt,
+      system: `You are an expert Hyrox trainer and workout designer. You create personalized, safe, and effective Hyrox workouts based on the athlete's current state and goals. Always follow official Hyrox standards but adapt for the athlete's level and condition.`,
     });
 
-    const responseContent = completion.choices[0]?.message?.content;
-    if (!responseContent) {
-      console.error('No response from OpenAI');
-      return null;
-    }
+    console.log('✅ AI workout generated successfully');
 
-    // Parse the AI response
-    const aiWorkout = JSON.parse(responseContent);
-    
     // Transform AI response to our WorkoutDetails format
     const workoutDetails = transformAIResponse(
-      aiWorkout,
+      object,
       fitnessLevel,
       userId,
       mood,
@@ -151,43 +158,14 @@ Create a workout that:
 5. Excludes any restricted stations
 6. Provides coaching notes explaining the adaptations
 
-**Response Format (JSON):**
-{
-  "stations": [
-    {
-      "id": 1,
-      "name": "SkiErg",
-      "distance": "1000m",
-      "order": 1
-    },
-    {
-      "id": 2,
-      "name": "Sled Push",
-      "distance": "50m",
-      "weight": "102kg",
-      "order": 2
-    }
-    // ... continue for all 8 stations (or fewer if excluded)
-  ],
-  "runs": [
-    {
-      "id": 1,
-      "distance": "1km",
-      "order": 0
-    }
-    // ... 8 runs total, alternating with stations
-  ],
-  "coachingNotes": "Brief explanation of adaptations made based on mood and intensity"
-}
-
-Generate the workout now.`;
+Generate the workout with stations array, runs array, and optional coaching notes.`;
 }
 
 /**
  * Transform AI response to our WorkoutDetails format
  */
 function transformAIResponse(
-  aiWorkout: any,
+  aiWorkout: z.infer<typeof workoutSchema>,
   fitnessLevel: FitnessLevel,
   userId: string,
   mood: MoodLevel,
@@ -196,7 +174,7 @@ function transformAIResponse(
   excludeStations: StationName[]
 ): WorkoutDetails {
   // Ensure stations have all required fields
-  const stations: Station[] = (aiWorkout.stations || []).map((s: any, index: number) => ({
+  const stations: Station[] = aiWorkout.stations.map((s, index) => ({
     id: s.id || index + 1,
     name: s.name,
     distance: s.distance,
@@ -206,7 +184,7 @@ function transformAIResponse(
   }));
 
   // Ensure runs have all required fields
-  const runs: Run[] = (aiWorkout.runs || []).map((r: any, index: number) => ({
+  const runs: Run[] = aiWorkout.runs.map((r, index) => ({
     id: r.id || index + 1,
     distance: r.distance || '1km',
     order: r.order !== undefined ? r.order : index * 2,
