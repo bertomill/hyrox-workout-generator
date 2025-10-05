@@ -1,9 +1,9 @@
 /**
  * Workout Generator Module
  * 
- * This module generates personalized Hyrox workouts based on fitness level.
- * A Hyrox workout consists of 8 running segments (1km each) interspersed with 8 functional fitness stations.
- * The intensity (weights, distances) is adjusted based on the user's fitness level.
+ * This module generates personalized Hyrox workouts based on fitness level. 
+ * A Hyrox workout consists of 8 running segments (1km each) interspersed with 8 functional fitness stations. ^ 
+ * The intensity (weights, distances) is adjusted based on the user's fitness level.^
  */
 
 import { WorkoutDetails, FitnessLevel, Station, Run } from './types';

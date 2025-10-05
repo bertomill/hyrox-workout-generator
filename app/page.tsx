@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { GeneratorForm } from '@/components/WorkoutGenerator/GeneratorForm';
 import { WorkoutDisplay } from '@/components/WorkoutGenerator/WorkoutDisplay';
+import { LogForm } from '@/components/WorkoutLogger/LogForm';
 
 export default function HomePage() {
   // State for modal visibility
@@ -20,13 +21,36 @@ export default function HomePage() {
   
   // State for generated workout
   const [currentWorkout, setCurrentWorkout] = useState<any | null>(null);
+  
+  // State for showing log form
+  const [isLoggingWorkout, setIsLoggingWorkout] = useState(false);
+  
+  // State for logged workouts count
+  const [loggedWorkoutsCount, setLoggedWorkoutsCount] = useState(0);
 
   /**
    * Handles successful workout generation
    */
   const handleWorkoutGenerated = (workout: any) => {
     setCurrentWorkout(workout);
+    setIsLoggingWorkout(false);
     console.log('Workout generated:', workout);
+  };
+  
+  /**
+   * Handles successful workout logging
+   */
+  const handleWorkoutLogged = (workoutLog: any) => {
+    console.log('Workout logged:', workoutLog);
+    setLoggedWorkoutsCount(prev => prev + 1);
+    setIsLoggingWorkout(false);
+    // Update workout status
+    if (currentWorkout) {
+      setCurrentWorkout({
+        ...currentWorkout,
+        status: 'completed',
+      });
+    }
   };
 
   return (
@@ -99,26 +123,65 @@ export default function HomePage() {
             </CardContent>
           </Card>
         ) : (
-          /* Display Generated Workout */
+          /* Display Generated Workout or Log Form */
           <>
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Current Workout</h2>
-                <p className="text-sm text-gray-600">Ready to start training</p>
-              </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setIsModalOpen(true)}
-              >
-                New Workout
-              </Button>
-            </div>
-            <WorkoutDisplay workout={currentWorkout} />
+            {!isLoggingWorkout ? (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Current Workout</h2>
+                    <p className="text-sm text-gray-600">
+                      {currentWorkout.status === 'completed' ? 'Completed!' : 'Ready to start training'}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    {currentWorkout.status !== 'completed' && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => setIsLoggingWorkout(true)}
+                      >
+                        Log Workout
+                      </Button>
+                    )}
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      New Workout
+                    </Button>
+                  </div>
+                </div>
+                <WorkoutDisplay workout={currentWorkout} />
+                
+                {/* Completion Badge */}
+                {currentWorkout.status === 'completed' && (
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#06D6A0] rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-green-900">Workout Completed!</div>
+                      <div className="text-sm text-green-700">Great job! Check your progress to see your results.</div>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              /* Log Form */
+              <LogForm
+                workout={currentWorkout}
+                onWorkoutLogged={handleWorkoutLogged}
+                onCancel={() => setIsLoggingWorkout(false)}
+              />
+            )}
           </>
         )}
 
-        {/* Quick Stats Section (Placeholder for Phase 4) */}
+        {/* Quick Stats Section */}
         <Card>
           <CardHeader>
             <CardTitle>Quick Stats</CardTitle>
@@ -126,7 +189,7 @@ export default function HomePage() {
           <CardContent>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-gray-900">0</div>
+                <div className="text-2xl font-bold text-gray-900">{loggedWorkoutsCount}</div>
                 <div className="text-sm text-gray-600">Workouts</div>
               </div>
               <div>
@@ -134,7 +197,7 @@ export default function HomePage() {
                 <div className="text-sm text-gray-600">Best Time</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">0</div>
+                <div className="text-2xl font-bold text-gray-900">{loggedWorkoutsCount > 0 ? '1' : '0'}</div>
                 <div className="text-sm text-gray-600">Streak</div>
               </div>
             </div>

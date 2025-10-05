@@ -23,7 +23,6 @@ const pool = new Pool({
     ? false 
     : {
         rejectUnauthorized: false, // Required for Supabase
-        require: true, // Force SSL connection
       },
 });
 
