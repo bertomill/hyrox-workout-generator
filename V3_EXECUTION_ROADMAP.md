@@ -323,28 +323,138 @@ Take Roxify from **good to exceptional** - creating a best-in-class UI/UX that r
 
 ## 🎨 UI/UX Design Principles
 
-### Reference App Analysis (TO BE FILLED AFTER SCREENSHOTS)
+### Reference App Analysis: WHOOP (Fitness Tracking App)
 
 **Visual Style:**
-- Color scheme:
-- Typography:
-- Spacing:
-- Component style:
-- Animation style:
 
-**Key Patterns to Adopt:**
-- [ ] Pattern 1: [Description]
-- [ ] Pattern 2: [Description]
-- [ ] Pattern 3: [Description]
+**Color Scheme (Dark Mode):**
+- Background: Deep charcoal `#2B3A3E` (or similar dark gray)
+- Card backgrounds: Slightly lighter `#374247`
+- Primary text: White/off-white `#FFFFFF`
+- Secondary text: Light gray `#9CA3AF`
+- Accent colors:
+  - Bright cyan/turquoise: `#06D6A0` or `#00FFC2` (data highlights)
+  - Light blue: `#7EC8E3` (charts, bars)
+  - Orange-to-purple gradient: `#FF6B6B` → `#A855F7` (borders, special cards)
+  - Yellow/orange: `#FFB366` (comparisons)
+  - Red/coral: For decline indicators
+  - Green: For improvement indicators
 
-### Roxify Design Goals
+**Light Mode (Custom for Roxify):**
+- Background: Light gray `#F9FAFB`
+- Card backgrounds: White `#FFFFFF`
+- Primary text: Dark gray `#111827`
+- Secondary text: Gray `#6B7280`
+- Same accent colors but adjusted opacity/saturation
+
+**Typography:**
+- Font: SF Pro Text or system sans-serif
+- All caps for section headers: `SLEEP STATISTICS`, `VS. PREVIOUS 30 DAYS`
+- Font weights: 400 (regular), 600 (semibold), 700 (bold)
+- Large metrics: 32-48px, bold
+- Labels: 12-14px, all caps, tracking-wide
+- Body: 14-16px
+
+**Spacing & Layout:**
+- Consistent padding: 16-20px
+- Card border-radius: 16px
+- Gap between cards: 12-16px
+- Section spacing: 24-32px
+- Full-width cards (edge-to-edge on mobile)
+- Generous whitespace
+
+**Key UI Patterns to Adopt:**
+
+**1. Header/Navigation Pattern:**
+- [ ] Profile avatar (top left)
+- [ ] Date navigation with arrows (< TODAY >)
+- [ ] Status indicator (top right - battery/ring)
+- [ ] Tab navigation (horizontal scroll)
+- [ ] Active tab underline indicator
+
+**2. Stats Card Pattern:**
+- [ ] Icon on left (simple line icon, 24x24)
+- [ ] Label text (uppercase, small)
+- [ ] Large metric on right (bold, 32-40px)
+- [ ] Comparison value below (smaller, muted color)
+- [ ] Trend arrow indicator (↑/↓)
+- [ ] Subtle background (not pure black)
+
+**3. Chart Patterns:**
+- [ ] Dark/light background (contextual)
+- [ ] Dual-line charts with color-coded legend
+- [ ] Bar charts with values on top
+- [ ] Last/current data point highlighted
+- [ ] Clean grid lines (subtle, low opacity)
+- [ ] X-axis labels (dates, compact format)
+- [ ] No heavy borders, minimal chrome
+
+**4. Hero Card (Primary Metric):**
+- [ ] Large icon with colored background
+- [ ] Huge primary number
+- [ ] Label below icon
+- [ ] Time range or detail on right
+- [ ] Click/tap to expand
+
+**5. Info/Education Banner:**
+- [ ] Gradient border (orange-purple)
+- [ ] Dark background (semi-transparent)
+- [ ] Icon on left
+- [ ] Title + description
+- [ ] Score/badge on top right
+- [ ] Chevron arrow for "learn more"
+
+**6. Bottom Navigation:**
+- [ ] Fixed bottom bar
+- [ ] Icon + label (stacked)
+- [ ] 4-5 items max
+- [ ] Active state highlighted
+- [ ] Simple line icons (not filled)
+
+**7. Floating Action Button (FAB):**
+- [ ] White circle with + icon
+- [ ] Bottom right, above nav
+- [ ] Drop shadow for elevation
+- [ ] Primary action (add workout, log data)
+
+**8. List/Feed Items:**
+- [ ] Card-based, rounded corners
+- [ ] Left icon/image
+- [ ] Title + metadata
+- [ ] Right chevron for detail view
+- [ ] Subtle hover/active state
+
+**9. Chart Tooltips/Details:**
+- [ ] Show on tap/hover
+- [ ] Dark popup with white text
+- [ ] Precise values
+- [ ] Date/time context
+
+**10. Empty States:**
+- [ ] Simple illustration/icon
+- [ ] Encouraging message
+- [ ] Call-to-action button
+
+### Roxify Design Goals (WHOOP-Inspired)
 
 **Before → After:**
-- 📱 **Mobile:** Good → Exceptional
-- 🎨 **Visual Polish:** Clean → Stunning
-- ⚡ **Animations:** Functional → Delightful
-- 🎯 **UX:** Intuitive → Effortless
-- 🏆 **Motivation:** Present → Inspiring
+- 📱 **Mobile:** Good → Exceptional (WHOOP-level polish)
+- 🎨 **Visual Polish:** Clean → Stunning (dark mode + light mode)
+- ⚡ **Animations:** Functional → Delightful (smooth transitions)
+- 🎯 **UX:** Intuitive → Effortless (data-first design)
+- 🏆 **Motivation:** Present → Inspiring (trend indicators, celebrations)
+
+**Specific Improvements:**
+1. **Dark Mode First:** Design for dark, adapt to light (like WHOOP)
+2. **Card-Based Layout:** Everything in rounded corner cards
+3. **Big Metrics:** Large, bold numbers front and center
+4. **Comparison Context:** Always show "vs. last week/month"
+5. **Trend Indicators:** Arrows and colors for quick insights
+6. **Minimal Chrome:** Less borders, more backgrounds and shadows
+7. **Consistent Iconography:** Simple line icons throughout
+8. **Gradient Accents:** Use sparingly for special elements
+9. **Data Visualization:** Charts with personality, not boring graphs
+10. **Empty States:** Encouraging, not discouraging
 
 ---
 
