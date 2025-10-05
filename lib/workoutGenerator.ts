@@ -64,27 +64,14 @@ const STATION_CONFIGS = {
 };
 
 /**
- * Mood multipliers affect workout volume/intensity
- * - Fresh: Increase volume/intensity
- * - Normal: Standard workout
- * - Tired: Reduce volume slightly
- * - Exhausted: Significant reduction in volume
+ * Mood and intensity affect COMPOSITION (which stations to include), not individual distances
+ * This keeps Hyrox standards while varying workout volume
  */
-const MOOD_MULTIPLIERS: Record<MoodLevel, number> = {
-  fresh: 1.1,
-  normal: 1.0,
-  tired: 0.85,
-  exhausted: 0.7,
-};
-
-/**
- * Intensity multipliers affect weights and run distances
- */
-const INTENSITY_MULTIPLIERS: Record<IntensityLevel, number> = {
-  light: 0.75,
-  moderate: 1.0,
-  hard: 1.15,
-  beast: 1.3,
+const STATION_SELECTION_CONFIG: Record<MoodLevel, Record<IntensityLevel, number>> = {
+  fresh: { light: 6, moderate: 7, hard: 8, beast: 8 },
+  normal: { light: 5, moderate: 6, hard: 7, beast: 8 },
+  tired: { light: 4, moderate: 5, hard: 6, beast: 7 },
+  exhausted: { light: 3, moderate: 4, hard: 5, beast: 6 },
 };
 
 /**
@@ -159,95 +146,74 @@ function generateWorkoutRuleBased(
   const duration = params?.duration || 60;
   const excludeStations = params?.excludeStations || [];
 
-  // Calculate multipliers
-  const moodMultiplier = MOOD_MULTIPLIERS[mood];
-  const intensityMultiplier = INTENSITY_MULTIPLIERS[intensity];
-  const combinedMultiplier = moodMultiplier * intensityMultiplier;
+  // Determine how many stations to include based on mood + intensity
+  const stationCount = STATION_SELECTION_CONFIG[mood][intensity];
 
-  // Apply multipliers to station configurations
-  const adjustWeight = (weight: string): string => {
-    const match = weight.match(/(\d+)/g);
-    if (!match) return weight;
-    const num = parseInt(match[0]);
-    const adjusted = Math.round(num * combinedMultiplier);
-    return weight.replace(match[0], adjusted.toString());
-  };
-
-  const adjustDistance = (distance: string): string => {
-    const match = distance.match(/(\d+)/);
-    if (!match) return distance;
-    const num = parseInt(match[0]);
-    const adjusted = Math.round(num * combinedMultiplier);
-    return distance.replace(match[0], adjusted.toString());
-  };
-
-  const adjustReps = (reps: string): string => {
-    const num = parseInt(reps);
-    const adjusted = Math.round(num * combinedMultiplier);
-    return adjusted.toString();
-  };
-
-  // Build all 8 stations with adjustments
+  // Build all 8 stations with STANDARD Hyrox distances/weights (no adjustments)
   const allStations: Station[] = [
     {
       id: 1,
       name: config.skierg.name,
-      distance: adjustDistance(config.skierg.distance),
+      distance: config.skierg.distance,
       order: 1,
     },
     {
       id: 2,
       name: config.sledPush.name,
       distance: config.sledPush.distance,
-      weight: adjustWeight(config.sledPush.weight),
+      weight: config.sledPush.weight,
       order: 2,
     },
     {
       id: 3,
       name: config.sledPull.name,
       distance: config.sledPull.distance,
-      weight: adjustWeight(config.sledPull.weight),
+      weight: config.sledPull.weight,
       order: 3,
     },
     {
       id: 4,
       name: config.burpeeBroadJumps.name,
-      distance: adjustDistance(config.burpeeBroadJumps.distance),
+      distance: config.burpeeBroadJumps.distance,
       order: 4,
     },
     {
       id: 5,
       name: config.rowing.name,
-      distance: adjustDistance(config.rowing.distance),
+      distance: config.rowing.distance,
       order: 5,
     },
     {
       id: 6,
       name: config.farmersCarry.name,
       distance: config.farmersCarry.distance,
-      weight: adjustWeight(config.farmersCarry.weight),
+      weight: config.farmersCarry.weight,
       order: 6,
     },
     {
       id: 7,
       name: config.sandbagLunges.name,
       distance: config.sandbagLunges.distance,
-      weight: adjustWeight(config.sandbagLunges.weight),
+      weight: config.sandbagLunges.weight,
       order: 7,
     },
     {
       id: 8,
       name: config.wallBalls.name,
-      reps: adjustReps(config.wallBalls.reps),
-      weight: adjustWeight(config.wallBalls.weight),
+      reps: config.wallBalls.reps,
+      weight: config.wallBalls.weight,
       order: 8,
     },
   ];
 
-  // Filter out excluded stations
-  const stations = allStations.filter(
+  // Filter out excluded stations first
+  let availableStations = allStations.filter(
     station => !excludeStations.includes(station.name as StationName)
   );
+
+  // Select the appropriate number of stations based on mood + intensity
+  // Prioritize keeping varied movements (alternate upper/lower, cardio/strength)
+  const stations = availableStations.slice(0, Math.min(stationCount, availableStations.length));
 
   // Get run configuration based on duration
   const runConfig = DURATION_CONFIGS[duration];

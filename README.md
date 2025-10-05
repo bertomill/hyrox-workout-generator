@@ -97,6 +97,7 @@ See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 - ✅ **Station Preferences:** Exclude exercises you want to avoid
 - ✅ **"Surprise Me" Button:** Random adaptive generation
 - ✅ **Enhanced UI:** Cal AI-inspired design with smooth animations
+- ✅ **Standard Hyrox Distances:** Workouts keep official race distances/weights, vary composition instead
 
 **Session 1 Complete - Rebrand + Authentication** ✅
 - ✅ Rebranded from "Hyrox Workout Generator" to "Roxify" (V2.0.0)

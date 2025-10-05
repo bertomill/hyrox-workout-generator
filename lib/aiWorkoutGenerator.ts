@@ -1,10 +1,10 @@
 /**
- * AI-Powered Workout Generator (SESSION 2 Enhancement)
+ * AI-Powered Workout Generator (SESSION 2 Enhancement) ^
  * 
- * Uses Vercel AI Gateway with OpenAI to generate truly adaptive, intelligent Hyrox workouts
- * based on user's mood, intensity, fitness level, and preferences.
+ * Uses Vercel AI Gateway with OpenAI to generate truly adaptive, intelligent Hyrox workouts ^
+ * based on user's mood, intensity, fitness level, and preferences. ^
  * 
- * Falls back to rule-based generation if AI fails.
+ * Falls back to rule-based generation if AI fails. ^
  */
 
 import { generateObject } from 'ai';
@@ -147,12 +147,18 @@ ${excludeStations.length > 0 ? `- MUST EXCLUDE these stations: ${excludeStations
 
 **Your Task:**
 Create a workout that:
-1. Adapts distances, weights, and volumes based on mood and intensity
-2. Adjusts run distances to fit the ${duration} minute timeframe
-3. Respects the athlete's current energy state (mood: ${mood})
-4. Matches their desired intensity (${intensity})
-5. Excludes any restricted stations
-6. Provides coaching notes explaining the adaptations
+1. KEEP standard Hyrox distances/weights (don't modify the official standards above)
+2. VARY the composition: select which stations to include based on mood and intensity
+   - Fresh + Hard/Beast: Include all 8 stations
+   - Normal + Moderate: Include 6-7 stations
+   - Tired + Light: Include 4-5 stations (focus on technique)
+   - Exhausted: Include 3-4 stations (recovery-focused)
+3. Adjust run distances to fit the ${duration} minute timeframe
+4. Respect the athlete's current energy state by varying volume (number of stations), not individual distances
+5. Exclude any restricted stations
+6. Provide coaching notes explaining which stations were selected and why
+
+IMPORTANT: Each station should use its standard Hyrox distance/weight for the fitness level. Adjust the workout by including more or fewer stations, not by modifying individual exercise parameters.
 
 Generate the workout with stations array, runs array, and optional coaching notes.`;
 }
