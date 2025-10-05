@@ -155,11 +155,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 SUPABASE_JWT_SECRET=your_supabase_jwt_secret
 
-# OpenAI API (for AI-powered workout generation)
-OPENAI_API_KEY=your_openai_api_key
+# Vercel AI Gateway (for AI-powered workout generation)
+VERCEL_AI_GATEWAY_API_KEY=your_vercel_ai_gateway_key
 ```
 
-**Note:** Without `OPENAI_API_KEY`, the app will fall back to rule-based workout generation (still functional!).
+**Note:** Without `VERCEL_AI_GATEWAY_API_KEY`, the app will fall back to rule-based workout generation (still functional!).
 
 ### 📱 Installing as PWA
 
