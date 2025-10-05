@@ -49,12 +49,12 @@ const STATION_CONFIGS = {
  * Generates a complete Hyrox workout based on fitness level
  * 
  * @param fitnessLevel - User's fitness level (beginner/intermediate/advanced)
- * @param userId - User ID for tracking (defaults to 1 for MVP)
+ * @param userId - User ID (UUID from Supabase Auth)
  * @returns Complete workout details object
  */
 export function generateWorkout(
   fitnessLevel: FitnessLevel,
-  userId: number = 1
+  userId: string
 ): WorkoutDetails {
   const config = STATION_CONFIGS[fitnessLevel];
 

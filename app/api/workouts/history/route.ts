@@ -1,26 +1,30 @@
 /**
- * API Route: Workout History ^
+ * API Route: Workout History
  * 
- * GET /api/workouts/history ^
+ * GET /api/workouts/history
  * 
- * Retrieves all logged workouts for a user, ordered by most recent first.!
- * Includes workout details and performance data for progress tracking. ~
+ * Retrieves all logged workouts for the authenticated user, ordered by most recent first.
+ * Includes workout details and performance data for progress tracking.
+ * 
+ * Requires authentication via Supabase Auth.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { createClient } from '@/lib/supabase/server';
 
 /**
- * GET handler for fetching workout history `
+ * GET handler for fetching workout history
  * 
  * Query parameters:
- * - userId: number (optional, defaults to 1 for MVP)
  * - limit: number (optional, defaults to 50)
- * - offset: number (optional, defaults to 0, for pagination) `
+ * - offset: number (optional, defaults to 0, for pagination)
+ * 
+ * Authentication: Required (via Supabase session)
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check if any database connection string is available `
+    // Check if any database connection string is available
     const hasDbConfig = process.env.DATABASE_URL || 
                         process.env.POSTGRES_URL_NON_POOLING || 
                         process.env.POSTGRES_URL;
@@ -43,9 +47,30 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get authenticated user from Supabase
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { 
+          error: 'Unauthorized',
+          details: 'You must be logged in to view workout history'
+        },
+        { 
+          status: 401,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
+      );
+    }
+
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    const userId = parseInt(searchParams.get('userId') || '1');
+    const userId = user.id; // Use authenticated user's UUID
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 

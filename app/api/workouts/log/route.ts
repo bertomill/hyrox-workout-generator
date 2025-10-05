@@ -1,23 +1,25 @@
 /**
- * API Route: Log Workout ^
+ * API Route: Log Workout
  * 
- * POST /api/workouts/log ^
+ * POST /api/workouts/log
  * 
- * Logs performance data for a completed workout and saves it to the workout_logs table. ^ 
- * Updates the workout status to 'completed' in the workouts table. ^ 
+ * Logs performance data for a completed workout and saves it to the workout_logs table.
+ * Updates the workout status to 'completed' in the workouts table.
+ * 
+ * Requires authentication via Supabase Auth.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { PerformanceData } from '@/lib/types';
+import { createClient } from '@/lib/supabase/server';
 
 /**
- * POST handler for logging workout results ^ 
+ * POST handler for logging workout results
  * 
  * Expected body:
  * {
- *   "workoutId": number, 
- *   "userId": number (optional, defaults to 1 for MVP),
+ *   "workoutId": number,
  *   "performanceData": {
  *     "stations": [{ "name": string, "time": "MM:SS", "order": number }],
  *     "runs": [{ "distance": string, "time": "MM:SS", "order": number }],
@@ -25,6 +27,8 @@ import { PerformanceData } from '@/lib/types';
  *   },
  *   "notes": string (optional)
  * }
+ * 
+ * Authentication: Required (via Supabase session)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -51,9 +55,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get authenticated user from Supabase
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { 
+          error: 'Unauthorized',
+          details: 'You must be logged in to log workouts'
+        },
+        { 
+          status: 401,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
+      );
+    }
+
     // Parse request body
     const body = await request.json();
-    const { workoutId, userId = 1, performanceData, notes = null } = body;
+    const { workoutId, performanceData, notes = null } = body;
+    const userId = user.id; // Use authenticated user's UUID
 
     // Validate required fields
     if (!workoutId) {
@@ -202,7 +228,8 @@ export async function GET() {
   return NextResponse.json({
     endpoint: '/api/workouts/log',
     method: 'POST',
-    description: 'Log performance data for a completed workout',
+    description: 'Log performance data for a completed workout (requires authentication)',
+    authentication: 'Required - Supabase session',
     requiredFields: {
       workoutId: 'number',
       performanceData: {
@@ -212,12 +239,10 @@ export async function GET() {
       },
     },
     optionalFields: {
-      userId: 'number (defaults to 1 for MVP)',
       notes: 'string',
     },
     exampleRequest: {
       workoutId: 1,
-      userId: 1,
       performanceData: {
         stations: [
           { name: 'SkiErg', time: '3:45', order: 1 },

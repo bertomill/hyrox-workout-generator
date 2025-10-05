@@ -23,7 +23,7 @@ export interface WorkoutDetails {
   fitnessLevel: FitnessLevel;
   stations: HyroxStation[];
   runs: HyroxRun[];
-  userId?: number;
+  userId?: string; // UUID from Supabase Auth
   generatedAt?: string;
 }
 
@@ -51,7 +51,7 @@ export interface PerformanceData {
 
 // Database models
 export interface User {
-  id: number;
+  id: string; // UUID from Supabase Auth
   email: string;
   password_hash?: string;
   name?: string;
@@ -62,7 +62,7 @@ export interface User {
 
 export interface Workout {
   id: number;
-  user_id: number;
+  user_id: string; // UUID from Supabase Auth
   date_generated: Date;
   workout_details: WorkoutDetails;
   status: WorkoutStatus;
@@ -72,7 +72,7 @@ export interface Workout {
 export interface WorkoutLog {
   id: number;
   workout_id: number;
-  user_id: number;
+  user_id: string; // UUID from Supabase Auth
   date_completed: Date;
   performance_data: PerformanceData;
   overall_time?: number; // Total time in seconds

@@ -15,8 +15,9 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 -   ✅ **PWA Support:** Install as a mobile app on iOS and Android
 
 **V2.0 In Progress:**
+-   ✅ **User Accounts:** Multi-user support with Supabase Auth + Google OAuth
+-   ⏳ **API Auth Migration:** Updated all API routes to use authenticated users (UUID-based)
 -   🚀 **Adaptive Generation:** Workouts that adapt to your mood and energy levels
--   🚀 **User Accounts:** Multi-user support with authentication
 -   🚀 **Social Features:** Connect with friends, leaderboards, and challenges
 -   🚀 **Advanced Analytics:** Deep performance insights and trend analysis
 -   🚀 **Training Plans:** Multi-week structured programs
@@ -26,7 +27,8 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 -   **Frontend:** Next.js 15 with TypeScript, React 19
 -   **Styling:** Tailwind CSS v4 with custom branded colors
 -   **Backend:** Next.js API Routes (serverless)
--   **Database:** Supabase PostgreSQL with connection pooling
+-   **Database:** Supabase PostgreSQL with Row Level Security (RLS)
+-   **Authentication:** Supabase Auth (email/password + Google OAuth)
 -   **Hosting:** Vercel with automatic deployments
 
 ### 🎨 Design System
@@ -55,12 +57,31 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 
 **V2.0 Roxify - IN PROGRESS 🔥**
 
-- ⏳ **Session 1:** Rebrand + Authentication (In Progress)
-- 📋 **Session 2:** Workout Management + Smart Generation
-- 📋 **Session 3:** Custom Templates + Analytics
-- 📋 **Future:** Social Features, Training Plans, Mobile Polish
+- ✅ **Session 1:** Rebrand + Supabase Auth (COMPLETE - Google OAuth working!)
+- ⏳ **Session 2:** API Auth Migration + Smart Workout Generation (IN PROGRESS)
+- 📋 **Session 3:** Workout Management + Custom Templates
+- 📋 **Session 4:** Social Features, Training Plans, Mobile Polish
 
 See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
+
+### 🎉 Latest Updates (October 5, 2025)
+
+**Session 2 (Part 1) - API Auth Migration** ⏳ IN PROGRESS
+- ✅ Updated database schema to use UUID for user_id (Supabase Auth compatible)
+- ✅ Migrated `/api/workouts/generate` to use authenticated Supabase users
+- ✅ Migrated `/api/workouts/log` to use authenticated Supabase users
+- ✅ Migrated `/api/workouts/history` to use authenticated Supabase users
+- ✅ Updated TypeScript types to reflect UUID-based user IDs
+- ✅ Row Level Security (RLS) policies added for workouts and workout_logs tables
+- 🔜 Next: Smart workout generation with mood selector, intensity dial, and more!
+
+**Session 1 Complete - Rebrand + Authentication** ✅
+- ✅ Rebranded from "Hyrox Workout Generator" to "Roxify" (V2.0.0)
+- ✅ Supabase Auth integration with email/password
+- ✅ Google OAuth ("Sign in with Google")
+- ✅ Login and Signup pages
+- ✅ Auth status in header with user welcome message
+- ✅ Sign In/Out functionality
 
 ### 🎉 Latest Updates (October 5, 2025)
 
@@ -119,8 +140,15 @@ npm start
 
 Required environment variables (already configured in Vercel):
 ```
+# Database
 POSTGRES_URL=your_supabase_connection_string
 POSTGRES_URL_NON_POOLING=your_supabase_direct_connection_string
+
+# Supabase Auth
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+SUPABASE_JWT_SECRET=your_supabase_jwt_secret
 ```
 
 ### 📱 Installing as PWA

@@ -5,21 +5,25 @@
  * 
  * Generates a new Hyrox workout based on user's fitness level and saves it to the database.
  * Returns the complete workout details for immediate display.
+ * 
+ * Requires authentication via Supabase Auth.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { generateWorkout, isValidFitnessLevel } from '@/lib/workoutGenerator';
 import { FitnessLevel } from '@/lib/types';
+import { createClient } from '@/lib/supabase/server';
 
 /**
  * POST handler for workout generation
  * 
  * Expected body:
  * {
- *   "fitnessLevel": "beginner" | "intermediate" | "advanced",
- *   "userId": number (optional, defaults to 1 for MVP)
+ *   "fitnessLevel": "beginner" | "intermediate" | "advanced"
  * }
+ * 
+ * Authentication: Required (via Supabase session)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -46,9 +50,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get authenticated user from Supabase
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { 
+          error: 'Unauthorized',
+          details: 'You must be logged in to generate workouts'
+        },
+        { 
+          status: 401,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
+      );
+    }
+
     // Parse request body
     const body = await request.json();
-    const { fitnessLevel, userId = 1 } = body;
+    const { fitnessLevel } = body;
+    const userId = user.id; // Use authenticated user's UUID
 
     // Validate fitness level
     if (!fitnessLevel || !isValidFitnessLevel(fitnessLevel)) {
@@ -149,16 +175,13 @@ export async function GET() {
   return NextResponse.json({
     endpoint: '/api/workouts/generate',
     method: 'POST',
-    description: 'Generate a new Hyrox workout based on fitness level',
+    description: 'Generate a new Hyrox workout based on fitness level (requires authentication)',
+    authentication: 'Required - Supabase session',
     requiredFields: {
       fitnessLevel: 'beginner | intermediate | advanced',
     },
-    optionalFields: {
-      userId: 'number (defaults to 1 for MVP)',
-    },
     exampleRequest: {
       fitnessLevel: 'intermediate',
-      userId: 1,
     },
   });
 }
