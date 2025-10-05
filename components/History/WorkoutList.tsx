@@ -9,6 +9,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { WorkoutCard } from './WorkoutCard';
+import { EditNotesModal } from './EditNotesModal';
+import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 
 export interface WorkoutListProps {
   userId?: number;
@@ -24,6 +26,11 @@ export function WorkoutList({ userId = 1 }: WorkoutListProps) {
   const [workouts, setWorkouts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Modal states
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState<any | null>(null);
 
   /**
    * Fetches workout history from API ^
@@ -52,6 +59,66 @@ export function WorkoutList({ userId = 1 }: WorkoutListProps) {
 
     fetchHistory();
   }, [userId]);
+
+  /**
+   * Handle edit workout notes
+   */
+  const handleEdit = (workoutId: number) => {
+    const workout = workouts.find(w => w.id === workoutId);
+    if (workout) {
+      setSelectedWorkout(workout);
+      setEditModalOpen(true);
+    }
+  };
+
+  /**
+   * Handle delete workout
+   */
+  const handleDelete = (workoutId: number) => {
+    const workout = workouts.find(w => w.id === workoutId);
+    if (workout) {
+      setSelectedWorkout(workout);
+      setDeleteModalOpen(true);
+    }
+  };
+
+  /**
+   * Save notes to API
+   */
+  const handleSaveNotes = async (workoutId: number, notes: string) => {
+    const response = await fetch(`/api/workouts/${workoutId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notes }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Failed to save notes');
+    }
+
+    // Update local state
+    setWorkouts(prev =>
+      prev.map(w => w.id === workoutId ? { ...w, notes } : w)
+    );
+  };
+
+  /**
+   * Delete workout from API
+   */
+  const handleConfirmDelete = async (workoutId: number) => {
+    const response = await fetch(`/api/workouts/${workoutId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Failed to delete workout');
+    }
+
+    // Remove from local state
+    setWorkouts(prev => prev.filter(w => w.id !== workoutId));
+  };
 
   // Loading state ^
   if (isLoading) {
@@ -113,22 +180,57 @@ export function WorkoutList({ userId = 1 }: WorkoutListProps) {
     );
   }
 
-  // List of workouts ^
+  // List of workouts
   return (
-    <div className="space-y-3">
-      {workouts.map((workout) => (
-        <WorkoutCard key={workout.id} workout={workout} />
-      ))}
-      
-      {/* Pagination placeholder for future */}
-      {workouts.length >= 50 && (
-        <div className="text-center py-4">
-          <p className="text-sm text-gray-500">
-            Showing {workouts.length} workouts
-          </p>
-        </div>
+    <>
+      <div className="space-y-3">
+        {workouts.map((workout) => (
+          <WorkoutCard 
+            key={workout.id} 
+            workout={workout}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ))}
+        
+        {/* Pagination placeholder for future */}
+        {workouts.length >= 50 && (
+          <div className="text-center py-4">
+            <p className="text-sm text-gray-500">
+              Showing {workouts.length} workouts
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Notes Modal */}
+      {selectedWorkout && (
+        <EditNotesModal
+          isOpen={editModalOpen}
+          workoutId={selectedWorkout.id}
+          currentNotes={selectedWorkout.notes || ''}
+          onClose={() => {
+            setEditModalOpen(false);
+            setSelectedWorkout(null);
+          }}
+          onSave={handleSaveNotes}
+        />
       )}
-    </div>
+
+      {/* Delete Confirmation Modal */}
+      {selectedWorkout && (
+        <DeleteConfirmationModal
+          isOpen={deleteModalOpen}
+          workoutId={selectedWorkout.id}
+          workoutDate={selectedWorkout.dateCompleted}
+          onClose={() => {
+            setDeleteModalOpen(false);
+            setSelectedWorkout(null);
+          }}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
+    </>
   );
 }
 
