@@ -1,20 +1,24 @@
 /**
- * History Page ^`
+ * History Page
  * 
- * Displays workout history with stats and list of all logged workouts. ^`
- * Features Cal AI-inspired clean design with performance overview. ^`
+ * Displays workout history with stats and list of all logged workouts.
+ * Features Cal AI-inspired clean design with performance overview.
  */
 
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { WorkoutList } from '@/components/History/WorkoutList';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { PerformanceChart } from '@/components/Analytics/PerformanceChart';
 import { PRCard } from '@/components/Analytics/PRCard';
 import { prepareTrendData, getCurrentPRs, WorkoutAnalytics } from '@/lib/analytics';
+
+// Dynamic import to prevent SSR issues with theme
+const ThemeToggle = dynamic(() => import('@/components/ui/ThemeToggle').then(mod => ({ default: mod.ThemeToggle })), { ssr: false });
 
 export default function HistoryPage() {
   const [stats, setStats] = useState<any>(null);
@@ -49,25 +53,27 @@ export default function HistoryPage() {
   const prs = getCurrentPRs(workouts);
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-200">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-light-bg-secondary dark:bg-dark-bg-secondary border-b border-light-border dark:border-dark-border sticky top-0 z-30 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link
                 href="/"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-light-text-tertiary dark:text-dark-text-tertiary hover:text-light-text-primary dark:hover:text-dark-text-primary transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Workout History</h1>
-                <p className="text-sm text-gray-600">Track your progress over time</p>
+                <h1 className="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary">Workout History</h1>
+                <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary">Track your progress over time</p>
               </div>
             </div>
+            {/* Theme Toggle */}
+            <ThemeToggle />
           </div>
         </div>
       </header>

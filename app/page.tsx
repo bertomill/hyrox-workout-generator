@@ -11,12 +11,16 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { GeneratorForm } from '@/components/WorkoutGenerator/GeneratorForm';
 import { WorkoutDisplay } from '@/components/WorkoutGenerator/WorkoutDisplay';
 import { LogForm } from '@/components/WorkoutLogger/LogForm';
+
+// Dynamic import to prevent SSR issues with theme
+const ThemeToggle = dynamic(() => import('@/components/ui/ThemeToggle').then(mod => ({ default: mod.ThemeToggle })), { ssr: false });
 
 export default function HomePage() {
   const router = useRouter();
@@ -82,19 +86,20 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-200">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-light-bg-secondary dark:bg-dark-bg-secondary border-b border-light-border dark:border-dark-border sticky top-0 z-30 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Roxify</h1>
-              <p className="text-sm text-gray-600">
+              <h1 className="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary">Roxify</h1>
+              <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary">
                 {user ? `Welcome, ${user.user_metadata?.name || user.email}` : 'Train Smarter for Hyrox'}
               </p>
             </div>
-            {/* Auth Buttons */}
+            {/* Auth Buttons & Theme Toggle */}
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               {user ? (
                 <Button
                   variant="secondary"
@@ -119,7 +124,8 @@ export default function HomePage() {
                     </Button>
                   </Link>
                 </>
-              )}</div>
+              )}
+            </div>
           </div>
         </div>
       </header>
