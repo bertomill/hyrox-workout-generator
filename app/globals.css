@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #e63946;
+  --color-secondary: #457b9d;
+  --color-accent: #f77f00;
+  --color-success: #06d6a0;
+  --color-warning: #fca311;
+  --color-error: #d62828;
+}
+
+:root {
+  --foreground-rgb: 33, 37, 41;
+  --background-start-rgb: 248, 249, 250;
+  --background-end-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}

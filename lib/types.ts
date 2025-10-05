@@ -1,0 +1,73 @@
+// TypeScript types for the application
+
+export type FitnessLevel = 'beginner' | 'intermediate' | 'advanced';
+
+export type WorkoutStatus = 'pending' | 'completed' | 'skipped';
+
+export interface HyroxStation {
+  name: string;
+  distance?: string;
+  reps?: string;
+  weight?: string;
+  order: number;
+}
+
+export interface HyroxRun {
+  distance: string;
+  order: number;
+}
+
+export interface WorkoutDetails {
+  fitnessLevel: FitnessLevel;
+  stations: HyroxStation[];
+  runs: HyroxRun[];
+}
+
+export interface StationPerformance {
+  name: string;
+  time: string; // Format: "MM:SS"
+  order: number;
+}
+
+export interface RunPerformance {
+  distance: string;
+  time: string; // Format: "MM:SS"
+  order: number;
+}
+
+export interface PerformanceData {
+  stations: StationPerformance[];
+  runs: RunPerformance[];
+  overallTime: string; // Format: "HH:MM:SS" or "MM:SS"
+}
+
+// Database models
+export interface User {
+  id: number;
+  email: string;
+  password_hash?: string;
+  name?: string;
+  fitness_level: FitnessLevel;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface Workout {
+  id: number;
+  user_id: number;
+  date_generated: Date;
+  workout_details: WorkoutDetails;
+  status: WorkoutStatus;
+  created_at: Date;
+}
+
+export interface WorkoutLog {
+  id: number;
+  workout_id: number;
+  user_id: number;
+  date_completed: Date;
+  performance_data: PerformanceData;
+  overall_time?: number; // Total time in seconds
+  notes?: string;
+  created_at: Date;
+}
