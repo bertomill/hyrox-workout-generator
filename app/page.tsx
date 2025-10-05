@@ -100,6 +100,13 @@ export default function HomePage() {
             {/* Auth Buttons & Theme Toggle */}
             <div className="flex items-center gap-2">
               <ThemeToggle />
+              {user && (
+                <Link href="/profile">
+                  <Button variant="secondary" size="sm">
+                    Profile
+                  </Button>
+                </Link>
+              )}
               {user ? (
                 <Button
                   variant="secondary"

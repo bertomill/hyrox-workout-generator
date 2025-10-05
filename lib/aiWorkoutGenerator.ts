@@ -22,7 +22,7 @@ import {
 import { z } from 'zod';
 
 /**
- * Zod schema for AI workout response
+ * Zod schema for AI workout response ^ 
  */
 const workoutSchema = z.object({
   stations: z.array(z.object({
@@ -42,15 +42,15 @@ const workoutSchema = z.object({
 });
 
 /**
- * Generate workout using Vercel AI Gateway + OpenAI
+ * Generate workout using Vercel AI Gateway + OpenAI ^
  */
 export async function generateWorkoutWithAI(
   fitnessLevel: FitnessLevel,
   userId: string,
   params?: Partial<WorkoutGenerationParams>
 ): Promise<WorkoutDetails | null> {
-  // Check if AI Gateway API key is configured
-  // Note: Vercel AI SDK expects AI_GATEWAY_API_KEY (not VERCEL_AI_GATEWAY_API_KEY)
+  // Check if AI Gateway API key is configured ^
+  // Note: Vercel AI SDK expects AI_GATEWAY_API_KEY (not VERCEL_AI_GATEWAY_API_KEY) ^
   if (!process.env.AI_GATEWAY_API_KEY) {
     console.warn('AI_GATEWAY_API_KEY not configured, falling back to rule-based generation');
     return null;
@@ -66,10 +66,10 @@ export async function generateWorkoutWithAI(
   const prompt = buildWorkoutPrompt(fitnessLevel, mood, intensity, duration, excludeStations);
 
   try {
-    // Use Vercel AI Gateway with plain string model identifier
-    // The AI Gateway automatically intercepts this and routes through the gateway
+    // Use Vercel AI Gateway with plain string model identifier ^
+    // The AI Gateway automatically intercepts this and routes through the gateway ^
     const { object } = await generateObject({
-      model: 'openai/gpt-4o-mini', // Format: provider/model-name
+      model: 'openai/gpt-4o-mini', // Format: provider/model-name ^
       schema: workoutSchema,
       prompt: prompt,
       system: `You are an expert Hyrox trainer and workout designer. You create personalized, safe, and effective Hyrox workouts based on the athlete's current state and goals. Always follow official Hyrox standards but adapt for the athlete's level and condition.`,
@@ -77,7 +77,7 @@ export async function generateWorkoutWithAI(
 
     console.log('✅ AI workout generated successfully');
 
-    // Transform AI response to our WorkoutDetails format
+    // Transform AI response to our WorkoutDetails format ^
     const workoutDetails = transformAIResponse(
       object,
       fitnessLevel,
@@ -96,7 +96,7 @@ export async function generateWorkoutWithAI(
 }
 
 /**
- * Build a detailed prompt for the AI
+ * Build a detailed prompt for the AI ^
  */
 function buildWorkoutPrompt(
   fitnessLevel: FitnessLevel,

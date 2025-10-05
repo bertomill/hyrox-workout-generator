@@ -21,6 +21,7 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 -   ✅ **"Surprise Me" Feature:** Random adaptive workout generation
 -   ✅ **Workout Management:** Edit workout notes, delete workouts with confirmation
 -   ✅ **Analytics & Charts:** Performance trends, PR detection, visual insights
+-   ✅ **User Profiles:** Save fitness level, goals, and default workout preferences
 -   🚀 **Workout Templates:** Save and reuse custom workout templates
 -   🚀 **Workout Favorites:** Bookmark and filter favorite workouts
 -   🚀 **Social Features:** Connect with friends, leaderboards, and challenges
@@ -69,6 +70,14 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 ### 🎉 Latest Updates (October 5, 2025)
+
+**Profile & Preferences** ✅
+- ✅ **User Profile Page:** Dedicated page to manage fitness level, goals, and preferences
+- ✅ **Workout Defaults:** Set default mood, intensity, duration for quick workout generation
+- ✅ **Station Exclusions:** Save stations you want to avoid in all workouts
+- ✅ **Auto-Population:** Generator form automatically loads your preferences
+- ✅ **Profile Navigation:** Easy access from header on all pages
+- ✅ **Database Schema:** New `user_profiles` table with RLS policies
 
 **Session 3 Complete - Analytics & Performance Tracking** ✅
 - ✅ **Performance Charts:** Beautiful line charts showing workout trends over time

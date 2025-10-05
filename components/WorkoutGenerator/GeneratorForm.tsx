@@ -15,7 +15,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { 
   FitnessLevel, 
@@ -36,9 +36,10 @@ export interface GeneratorFormProps {
 
 /**
  * Enhanced Workout Generator Modal with Smart Generation Features
+ * Now pulls defaults from user profile!
  */
 export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: GeneratorFormProps) {
-  // Form state
+  // Form state (initialized from profile)
   const [selectedLevel, setSelectedLevel] = useState<FitnessLevel>('intermediate');
   const [selectedMood, setSelectedMood] = useState<MoodLevel>('normal');
   const [selectedIntensity, setSelectedIntensity] = useState<IntensityLevel>('moderate');
@@ -49,6 +50,45 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  /**
+   * Fetch user profile and set defaults
+   */
+  useEffect(() => {
+    if (!isOpen || profileLoaded) return;
+
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('/api/profile');
+        const data = await response.json();
+
+        if (data.profile) {
+          // Set form defaults from profile
+          setSelectedLevel(data.profile.fitness_level || 'intermediate');
+          setSelectedMood(data.profile.default_mood || 'normal');
+          setSelectedIntensity(data.profile.default_intensity || 'moderate');
+          setSelectedDuration(data.profile.default_duration || 60);
+          setExcludedStations(data.profile.excluded_stations || []);
+        } else if (data.defaults) {
+          // Use system defaults if no profile
+          setSelectedLevel(data.defaults.fitness_level);
+          setSelectedMood(data.defaults.default_mood || 'normal');
+          setSelectedIntensity(data.defaults.default_intensity || 'moderate');
+          setSelectedDuration(data.defaults.default_duration);
+          setExcludedStations(data.defaults.excluded_stations || []);
+        }
+        
+        setProfileLoaded(true);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        // Continue with defaults if profile fetch fails
+        setProfileLoaded(true);
+      }
+    };
+
+    fetchProfile();
+  }, [isOpen, profileLoaded]);
 
   /**
    * Handles the "Surprise Me" random generation

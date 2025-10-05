@@ -10,6 +10,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { createClient } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { WorkoutList } from '@/components/History/WorkoutList';
 import { ProgressRing } from '@/components/ui/ProgressRing';
@@ -24,12 +26,18 @@ export default function HistoryPage() {
   const [stats, setStats] = useState<any>(null);
   const [workouts, setWorkouts] = useState<WorkoutAnalytics[]>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [user, setUser] = useState<any>(null);
 
   /**
    * Fetches summary statistics and workout history
    */
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch user
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+
       try {
         const response = await fetch('/api/workouts/history');
         const data = await response.json();
@@ -72,8 +80,17 @@ export default function HistoryPage() {
                 <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary">Track your progress over time</p>
               </div>
             </div>
-            {/* Theme Toggle */}
-            <ThemeToggle />
+            {/* Navigation & Theme Toggle */}
+            <div className="flex items-center gap-2">
+              {user && (
+                <Link href="/profile">
+                  <Button variant="secondary" size="sm">
+                    Profile
+                  </Button>
+                </Link>
+              )}
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
