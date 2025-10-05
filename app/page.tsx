@@ -8,8 +8,10 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { GeneratorForm } from '@/components/WorkoutGenerator/GeneratorForm';
@@ -17,6 +19,9 @@ import { WorkoutDisplay } from '@/components/WorkoutGenerator/WorkoutDisplay';
 import { LogForm } from '@/components/WorkoutLogger/LogForm';
 
 export default function HomePage() {
+  const router = useRouter();
+  const supabase = createClient();
+  
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -28,6 +33,28 @@ export default function HomePage() {
   
   // State for logged workouts count
   const [loggedWorkoutsCount, setLoggedWorkoutsCount] = useState(0);
+  
+  // State for user
+  const [user, setUser] = useState<any | null>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+
+  // Check auth status
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setIsLoadingAuth(false);
+    };
+
+    getUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
 
   /**
    * Handles successful workout generation
@@ -62,13 +89,37 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Roxify</h1>
-              <p className="text-sm text-gray-600">Train Smarter for Hyrox</p>
+              <p className="text-sm text-gray-600">
+                {user ? `Welcome, ${user.user_metadata?.name || user.email}` : 'Train Smarter for Hyrox'}
+              </p>
             </div>
-            {/* Streak indicator (placeholder for future) */}
-            <div className="flex items-center gap-1 text-[#F77F00]">
-              <span className="text-2xl">🔥</span>
-              <span className="font-bold text-lg">1</span>
-            </div>
+            {/* Auth Buttons */}
+            <div className="flex items-center gap-2">
+              {user ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    router.refresh();
+                  }}
+                >
+                  Sign Out
+                </Button>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button variant="secondary" size="sm">
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button variant="primary" size="sm">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}</div>
           </div>
         </div>
       </header>
