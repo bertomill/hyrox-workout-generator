@@ -1,7 +1,7 @@
 /**
  * Card Component
  * 
- * Reusable card container component following the Cal AI design aesthetic.
+ * iOS-inspired card with no borders, just shadows and spacing.
  * Used for workout displays, stats, and content sections throughout the app.
  */
 
@@ -17,7 +17,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Card component with clean, modern styling
+ * Card component with iOS-inspired design
  * 
  * Usage:
  * <Card>Content goes here</Card>
@@ -30,12 +30,12 @@ export function Card({
   className = '',
   ...props
 }: CardProps) {
-  // Base card styles - white background, rounded corners, subtle shadow
-  const baseStyles = 'bg-white rounded-xl shadow-sm border border-gray-100';
+  // iOS-style card - no borders, subtle shadow, dark mode support
+  const baseStyles = 'bg-light-bg-secondary dark:bg-dark-bg-secondary rounded-card shadow-card dark:shadow-card-dark';
 
   // Interactive styles - adds hover and press effects
   const interactiveStyles = interactive
-    ? 'cursor-pointer hover:shadow-md active:scale-[0.98] transition-all duration-150 ease-out'
+    ? 'cursor-pointer hover:shadow-elevated dark:hover:shadow-elevated-dark active:scale-[0.98] transition-all duration-150 ease-out'
     : '';
 
   // Padding styles
@@ -84,7 +84,7 @@ export function CardTitle({
   className?: string;
 }) {
   return (
-    <h3 className={`text-xl font-semibold text-gray-900 ${className}`}>
+    <h3 className={`text-xl font-semibold text-light-text-primary dark:text-dark-text-primary ${className}`}>
       {children}
     </h3>
   );

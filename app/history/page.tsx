@@ -55,7 +55,7 @@ export default function HistoryPage() {
   return (
     <main className="min-h-screen bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-200">
       {/* Header */}
-      <header className="bg-light-bg-secondary dark:bg-dark-bg-secondary border-b border-light-border dark:border-dark-border sticky top-0 z-30 backdrop-blur-sm">
+      <header className="bg-light-bg-secondary dark:bg-dark-bg-secondary sticky top-0 z-30 backdrop-blur-sm shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
