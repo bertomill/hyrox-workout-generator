@@ -20,11 +20,11 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 -   ✅ **Smart Workout Generation:** Mood selector, intensity dial, duration picker, station preferences
 -   ✅ **"Surprise Me" Feature:** Random adaptive workout generation
 -   ✅ **Workout Management:** Edit workout notes, delete workouts with confirmation
+-   ✅ **Analytics & Charts:** Performance trends, PR detection, visual insights
+-   🚀 **Workout Templates:** Save and reuse custom workout templates
 -   🚀 **Workout Favorites:** Bookmark and filter favorite workouts
 -   🚀 **Social Features:** Connect with friends, leaderboards, and challenges
--   🚀 **Advanced Analytics:** Deep performance insights and trend analysis
 -   🚀 **Training Plans:** Multi-week structured programs
--   🚀 **Custom Templates:** Create and save your own workout templates
 
 ### 🛠️ Technical Stack
 -   **Frontend:** Next.js 15 with TypeScript, React 19
@@ -69,6 +69,13 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 ### 🎉 Latest Updates (October 5, 2025)
+
+**Session 3 Complete - Analytics & Performance Tracking** ✅
+- ✅ **Performance Charts:** Beautiful line charts showing workout trends over time
+- ✅ **PR Detection:** Automatically detects and displays personal records
+- ✅ **Station Analytics:** Track performance for individual stations
+- ✅ **Visual Insights:** Interactive Recharts with custom tooltips
+- ✅ **Trend Analysis:** See improvements and identify areas to focus on
 
 **Session 3 Complete - Workout Management** ✅
 - ✅ **Edit Workout Notes:** Add/edit notes after completing workouts

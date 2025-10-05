@@ -12,32 +12,41 @@ import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { WorkoutList } from '@/components/History/WorkoutList';
 import { ProgressRing } from '@/components/ui/ProgressRing';
+import { PerformanceChart } from '@/components/Analytics/PerformanceChart';
+import { PRCard } from '@/components/Analytics/PRCard';
+import { prepareTrendData, getCurrentPRs, WorkoutAnalytics } from '@/lib/analytics';
 
 export default function HistoryPage() {
   const [stats, setStats] = useState<any>(null);
+  const [workouts, setWorkouts] = useState<WorkoutAnalytics[]>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   /**
-   * Fetches summary statistics ^`
+   * Fetches summary statistics and workout history
    */
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/workouts/history?userId=1');
+        const response = await fetch('/api/workouts/history');
         const data = await response.json();
 
         if (response.ok) {
           setStats(data.stats);
+          setWorkouts(data.workouts || []);
         }
       } catch (err) {
-        console.error('Error fetching stats:', err);
+        console.error('Error fetching history:', err);
       } finally {
         setIsLoadingStats(false);
       }
     };
 
-    fetchStats();
+    fetchData();
   }, []);
+
+  // Prepare analytics data
+  const trendData = prepareTrendData(workouts, 10);
+  const prs = getCurrentPRs(workouts);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -95,12 +104,43 @@ export default function HistoryPage() {
           />
         </div>
 
-        {/* Progress Ring Overview - Visual Polish` */}
+        {/* Performance Chart - Visual Trends */}
+        {workouts.length >= 2 && (
+          <Card>
+            <CardContent className="p-6">
+              <PerformanceChart data={trendData} title="📈 Performance Trend" />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Personal Records Section */}
+        {prs.overall && (
+          <div className="space-y-3">
+            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <span>🏆</span>
+              Personal Records
+            </h2>
+            
+            {/* Overall PR - Prominent */}
+            <PRCard record={prs.overall} />
+            
+            {/* Recent Station PRs */}
+            {prs.stations.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {prs.stations.slice(0, 4).map((pr, index) => (
+                  <PRCard key={`${pr.name}-${pr.workoutId}`} record={pr} rank={index + 1} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Progress Ring Overview - Visual Polish */}
         {stats && stats.totalWorkouts > 0 && (
           <Card className="bg-gradient-to-br from-gray-50 to-white">
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row items-center justify-around gap-6">
-                {/* Completion Rate` */}
+                {/* Completion Rate */}
                 <div className="text-center">
                   <ProgressRing
                     progress={100}
@@ -116,7 +156,7 @@ export default function HistoryPage() {
                   <p className="text-xs text-gray-600 mt-2">Completion Rate</p>
                 </div>
 
-                {/* Progress vs Goal (example: 10 workouts goal`) */}
+                {/* Progress vs Goal (example: 10 workouts goal) */}
                 <div className="text-center">
                   <ProgressRing
                     progress={Math.min((stats.totalWorkouts / 10) * 100, 100)}
@@ -132,7 +172,7 @@ export default function HistoryPage() {
                   <p className="text-xs text-gray-600 mt-2">Monthly Goal</p>
                 </div>
 
-                {/* Consistency (based on streak)` */}
+                {/* Consistency (based on streak) */}
                 <div className="text-center">
                   <ProgressRing
                     progress={Math.min((stats.recentStreak / 7) * 100, 100)}
@@ -162,10 +202,10 @@ export default function HistoryPage() {
           </CardContent>
         </Card>
 
-        {/* Info Banner `*/}
+        {/* Info Banner */}
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
           <p className="text-sm text-blue-900">
-            💡 <span className="font-semibold">Tip:</span> Tap on any workout to expand and see detailed performance data for each station and run.
+            💡 <span className="font-semibold">Tip:</span> Tap on any workout to expand, edit notes, or see detailed performance data for each station and run.
           </p>
         </div>
       </div>
