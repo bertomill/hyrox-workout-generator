@@ -1,6 +1,31 @@
-// TypeScript types for the application '
+// TypeScript types for the application
 
 export type FitnessLevel = 'beginner' | 'intermediate' | 'advanced';
+
+// Smart generation types (SESSION 2 features)
+export type MoodLevel = 'fresh' | 'normal' | 'tired' | 'exhausted';
+export type IntensityLevel = 'light' | 'moderate' | 'hard' | 'beast';
+export type WorkoutDuration = 30 | 45 | 60 | 90;
+
+// Station names for preferences
+export type StationName = 
+  | 'SkiErg' 
+  | 'Sled Push' 
+  | 'Sled Pull' 
+  | 'Burpee Broad Jumps' 
+  | 'Rowing' 
+  | 'Farmers Carry' 
+  | 'Sandbag Lunges' 
+  | 'Wall Balls';
+
+export interface WorkoutGenerationParams {
+  fitnessLevel: FitnessLevel;
+  mood?: MoodLevel;
+  intensity?: IntensityLevel;
+  duration?: WorkoutDuration;
+  excludeStations?: StationName[];
+  surpriseMe?: boolean;
+}
 
 export type WorkoutStatus = 'pending' | 'completed' | 'skipped';
 
@@ -25,6 +50,11 @@ export interface WorkoutDetails {
   runs: HyroxRun[];
   userId?: string; // UUID from Supabase Auth
   generatedAt?: string;
+  // Smart generation metadata
+  mood?: MoodLevel;
+  intensity?: IntensityLevel;
+  duration?: WorkoutDuration;
+  excludedStations?: StationName[];
 }
 
 // Aliases for convenience

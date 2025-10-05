@@ -16,8 +16,10 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 
 **V2.0 In Progress:**
 -   ✅ **User Accounts:** Multi-user support with Supabase Auth + Google OAuth
--   ⏳ **API Auth Migration:** Updated all API routes to use authenticated users (UUID-based)
--   🚀 **Adaptive Generation:** Workouts that adapt to your mood and energy levels
+-   ✅ **API Auth Migration:** All API routes use authenticated users (UUID-based, RLS enabled)
+-   ✅ **Smart Workout Generation:** Mood selector, intensity dial, duration picker, station preferences
+-   ✅ **"Surprise Me" Feature:** Random adaptive workout generation
+-   🚀 **Workout Management:** Edit and delete workouts, add notes
 -   🚀 **Social Features:** Connect with friends, leaderboards, and challenges
 -   🚀 **Advanced Analytics:** Deep performance insights and trend analysis
 -   🚀 **Training Plans:** Multi-week structured programs
@@ -57,23 +59,24 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 
 **V2.0 Roxify - IN PROGRESS 🔥**
 
-- ✅ **Session 1:** Rebrand + Supabase Auth (COMPLETE - Google OAuth working!)
-- ⏳ **Session 2:** API Auth Migration + Smart Workout Generation (IN PROGRESS)
-- 📋 **Session 3:** Workout Management + Custom Templates
+- ✅ **Session 1:** Rebrand + Supabase Auth (COMPLETE!)
+- ✅ **Session 2:** API Auth Migration + Smart Workout Generation (COMPLETE!)
+- 📋 **Session 3:** Workout Management (Edit/Delete) + Custom Templates
 - 📋 **Session 4:** Social Features, Training Plans, Mobile Polish
 
 See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 ### 🎉 Latest Updates (October 5, 2025)
 
-**Session 2 (Part 1) - API Auth Migration** ⏳ IN PROGRESS
-- ✅ Updated database schema to use UUID for user_id (Supabase Auth compatible)
-- ✅ Migrated `/api/workouts/generate` to use authenticated Supabase users
-- ✅ Migrated `/api/workouts/log` to use authenticated Supabase users
-- ✅ Migrated `/api/workouts/history` to use authenticated Supabase users
-- ✅ Updated TypeScript types to reflect UUID-based user IDs
-- ✅ Row Level Security (RLS) policies added for workouts and workout_logs tables
-- 🔜 Next: Smart workout generation with mood selector, intensity dial, and more!
+**Session 2 Complete - Smart Workout Generation** ✅
+- ✅ **API Auth Migration:** All routes use authenticated Supabase users with RLS
+- ✅ **Mood Selector:** Fresh / Normal / Tired / Exhausted
+- ✅ **Intensity Dial:** Light / Moderate / Hard / Beast Mode
+- ✅ **Duration Picker:** 30 / 45 / 60 / 90 minute workouts
+- ✅ **Station Preferences:** Exclude exercises you want to avoid
+- ✅ **"Surprise Me" Button:** Random adaptive generation
+- ✅ **Smart Algorithm:** Workouts adapt based on mood + intensity combinations
+- ✅ **Enhanced UI:** Cal AI-inspired design with smooth animations
 
 **Session 1 Complete - Rebrand + Authentication** ✅
 - ✅ Rebranded from "Hyrox Workout Generator" to "Roxify" (V2.0.0)
@@ -83,7 +86,7 @@ See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 - ✅ Auth status in header with user welcome message
 - ✅ Sign In/Out functionality
 
-### 🎉 Latest Updates (October 5, 2025)
+### 🎉 Previous Updates
 
 **Phase 5 Complete - Polish & Deploy** ✅
 - ✅ PWA manifest.json with app icons configuration

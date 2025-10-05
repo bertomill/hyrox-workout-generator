@@ -16,11 +16,16 @@ import { FitnessLevel } from '@/lib/types';
 import { createClient } from '@/lib/supabase/server';
 
 /**
- * POST handler for workout generation
+ * POST handler for workout generation (SESSION 2 Enhanced)
  * 
  * Expected body:
  * {
- *   "fitnessLevel": "beginner" | "intermediate" | "advanced"
+ *   "fitnessLevel": "beginner" | "intermediate" | "advanced",
+ *   "mood"?: "fresh" | "normal" | "tired" | "exhausted",
+ *   "intensity"?: "light" | "moderate" | "hard" | "beast",
+ *   "duration"?: 30 | 45 | 60 | 90,
+ *   "excludeStations"?: string[],
+ *   "surpriseMe"?: boolean
  * }
  * 
  * Authentication: Required (via Supabase session)
@@ -73,7 +78,14 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { fitnessLevel } = body;
+    const { 
+      fitnessLevel, 
+      mood, 
+      intensity, 
+      duration, 
+      excludeStations, 
+      surpriseMe 
+    } = body;
     const userId = user.id; // Use authenticated user's UUID
 
     // Validate fitness level
@@ -93,8 +105,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate workout using the algorithm
-    const workoutDetails = generateWorkout(fitnessLevel as FitnessLevel, userId);
+    // Generate workout using the enhanced algorithm
+    const workoutDetails = generateWorkout(
+      fitnessLevel as FitnessLevel, 
+      userId,
+      {
+        mood,
+        intensity,
+        duration,
+        excludeStations,
+        surpriseMe,
+      }
+    );
 
     // Save workout to database
     const sql = `
@@ -175,13 +197,28 @@ export async function GET() {
   return NextResponse.json({
     endpoint: '/api/workouts/generate',
     method: 'POST',
-    description: 'Generate a new Hyrox workout based on fitness level (requires authentication)',
+    description: 'Generate a smart, adaptive Hyrox workout (SESSION 2 Enhanced)',
     authentication: 'Required - Supabase session',
     requiredFields: {
       fitnessLevel: 'beginner | intermediate | advanced',
     },
+    optionalFields: {
+      mood: 'fresh | normal | tired | exhausted (default: normal)',
+      intensity: 'light | moderate | hard | beast (default: moderate)',
+      duration: '30 | 45 | 60 | 90 minutes (default: 60)',
+      excludeStations: 'Array of station names to exclude',
+      surpriseMe: 'boolean - randomize mood and intensity',
+    },
     exampleRequest: {
       fitnessLevel: 'intermediate',
+      mood: 'fresh',
+      intensity: 'hard',
+      duration: 60,
+      excludeStations: ['Wall Balls'],
+    },
+    exampleSurpriseMe: {
+      fitnessLevel: 'intermediate',
+      surpriseMe: true,
     },
   });
 }

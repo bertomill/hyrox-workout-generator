@@ -1,12 +1,28 @@
 /**
- * Workout Generator Module '
+ * Enhanced Workout Generator Module (SESSION 2)
  * 
- * This module generates personalized Hyrox workouts based on fitness level. '
- * A Hyrox workout consists of 8 running segments (1km each) interspersed with 8 functional fitness stations. ^ 
- * The intensity (weights, distances) is adjusted based on the user's fitness level.^
+ * This module generates personalized Hyrox workouts based on multiple factors:
+ * - Fitness level (beginner/intermediate/advanced)
+ * - Mood (fresh/normal/tired/exhausted)
+ * - Intensity preference (light/moderate/hard/beast)
+ * - Duration (30/45/60/90 minutes)
+ * - Station preferences (exclude certain exercises)
+ * 
+ * The algorithm adapts weights, distances, and run lengths based on these inputs
+ * to create truly personalized, smart workouts.
  */
 
-import { WorkoutDetails, FitnessLevel, Station, Run } from './types';
+import { 
+  WorkoutDetails, 
+  FitnessLevel, 
+  Station, 
+  Run, 
+  MoodLevel,
+  IntensityLevel,
+  WorkoutDuration,
+  StationName,
+  WorkoutGenerationParams
+} from './types';
 
 /**
  * Station configurations by fitness level
@@ -15,8 +31,8 @@ import { WorkoutDetails, FitnessLevel, Station, Run } from './types';
 const STATION_CONFIGS = {
   beginner: {
     skierg: { name: 'SkiErg', distance: '1000m', unit: 'm' },
-    sledPush: { name: 'Sled Push', distance: '50m', weight: '150kg', unit: 'm' },
-    sledPull: { name: 'Sled Pull', distance: '50m', weight: '100kg', unit: 'm' },
+    sledPush: { name: 'Sled Push', distance: '50m', weight: '50kg', unit: 'm' },
+    sledPull: { name: 'Sled Pull', distance: '50m', weight: '70kg', unit: 'm' },
     burpeeBroadJumps: { name: 'Burpee Broad Jumps', distance: '80m', unit: 'm' },
     rowing: { name: 'Rowing', distance: '1000m', unit: 'm' },
     farmersCarry: { name: 'Farmers Carry', distance: '200m', weight: '2x16kg', unit: 'm' },
@@ -46,87 +62,175 @@ const STATION_CONFIGS = {
 };
 
 /**
- * Generates a complete Hyrox workout based on fitness level
+ * Mood multipliers affect workout volume/intensity
+ * - Fresh: Increase volume/intensity
+ * - Normal: Standard workout
+ * - Tired: Reduce volume slightly
+ * - Exhausted: Significant reduction in volume
+ */
+const MOOD_MULTIPLIERS: Record<MoodLevel, number> = {
+  fresh: 1.1,
+  normal: 1.0,
+  tired: 0.85,
+  exhausted: 0.7,
+};
+
+/**
+ * Intensity multipliers affect weights and run distances
+ */
+const INTENSITY_MULTIPLIERS: Record<IntensityLevel, number> = {
+  light: 0.75,
+  moderate: 1.0,
+  hard: 1.15,
+  beast: 1.3,
+};
+
+/**
+ * Duration affects run distances
+ */
+const DURATION_CONFIGS: Record<WorkoutDuration, { runDistance: string; runCount: number }> = {
+  30: { runDistance: '500m', runCount: 8 },
+  45: { runDistance: '750m', runCount: 8 },
+  60: { runDistance: '1km', runCount: 8 },
+  90: { runDistance: '1.5km', runCount: 8 },
+};
+
+/**
+ * Generates a complete Hyrox workout based on multiple parameters
  * 
  * @param fitnessLevel - User's fitness level (beginner/intermediate/advanced)
  * @param userId - User ID (UUID from Supabase Auth)
+ * @param params - Optional generation parameters (mood, intensity, duration, etc.)
  * @returns Complete workout details object
  */
 export function generateWorkout(
   fitnessLevel: FitnessLevel,
-  userId: string
+  userId: string,
+  params?: Partial<WorkoutGenerationParams>
 ): WorkoutDetails {
   const config = STATION_CONFIGS[fitnessLevel];
+  
+  // Extract parameters with defaults
+  const mood = params?.mood || 'normal';
+  const intensity = params?.intensity || 'moderate';
+  const duration = params?.duration || 60;
+  const excludeStations = params?.excludeStations || [];
+  const surpriseMe = params?.surpriseMe || false;
 
-  // Create 8 stations in standard Hyrox order
-  const stations: Station[] = [
+  // If surprise me, randomize some parameters
+  if (surpriseMe) {
+    const randomMood: MoodLevel = ['fresh', 'normal', 'tired', 'exhausted'][Math.floor(Math.random() * 4)] as MoodLevel;
+    const randomIntensity: IntensityLevel = ['light', 'moderate', 'hard', 'beast'][Math.floor(Math.random() * 4)] as IntensityLevel;
+    return generateWorkout(fitnessLevel, userId, {
+      ...params,
+      mood: randomMood,
+      intensity: randomIntensity,
+      surpriseMe: false,
+    });
+  }
+
+  // Calculate multipliers
+  const moodMultiplier = MOOD_MULTIPLIERS[mood];
+  const intensityMultiplier = INTENSITY_MULTIPLIERS[intensity];
+  const combinedMultiplier = moodMultiplier * intensityMultiplier;
+
+  // Apply multipliers to station configurations
+  const adjustWeight = (weight: string): string => {
+    const match = weight.match(/(\d+)/g);
+    if (!match) return weight;
+    const num = parseInt(match[0]);
+    const adjusted = Math.round(num * combinedMultiplier);
+    return weight.replace(match[0], adjusted.toString());
+  };
+
+  const adjustDistance = (distance: string): string => {
+    const match = distance.match(/(\d+)/);
+    if (!match) return distance;
+    const num = parseInt(match[0]);
+    const adjusted = Math.round(num * combinedMultiplier);
+    return distance.replace(match[0], adjusted.toString());
+  };
+
+  const adjustReps = (reps: string): string => {
+    const num = parseInt(reps);
+    const adjusted = Math.round(num * combinedMultiplier);
+    return adjusted.toString();
+  };
+
+  // Build all 8 stations with adjustments
+  const allStations: Station[] = [
     {
       id: 1,
       name: config.skierg.name,
-      distance: config.skierg.distance,
+      distance: adjustDistance(config.skierg.distance),
       order: 1,
     },
     {
       id: 2,
       name: config.sledPush.name,
       distance: config.sledPush.distance,
-      weight: config.sledPush.weight,
+      weight: adjustWeight(config.sledPush.weight),
       order: 2,
     },
     {
       id: 3,
       name: config.sledPull.name,
       distance: config.sledPull.distance,
-      weight: config.sledPull.weight,
+      weight: adjustWeight(config.sledPull.weight),
       order: 3,
     },
     {
       id: 4,
       name: config.burpeeBroadJumps.name,
-      distance: config.burpeeBroadJumps.distance,
+      distance: adjustDistance(config.burpeeBroadJumps.distance),
       order: 4,
     },
     {
       id: 5,
       name: config.rowing.name,
-      distance: config.rowing.distance,
+      distance: adjustDistance(config.rowing.distance),
       order: 5,
     },
     {
       id: 6,
       name: config.farmersCarry.name,
       distance: config.farmersCarry.distance,
-      weight: config.farmersCarry.weight,
+      weight: adjustWeight(config.farmersCarry.weight),
       order: 6,
     },
     {
       id: 7,
       name: config.sandbagLunges.name,
       distance: config.sandbagLunges.distance,
-      weight: config.sandbagLunges.weight,
+      weight: adjustWeight(config.sandbagLunges.weight),
       order: 7,
     },
     {
       id: 8,
       name: config.wallBalls.name,
-      reps: config.wallBalls.reps,
-      weight: config.wallBalls.weight,
+      reps: adjustReps(config.wallBalls.reps),
+      weight: adjustWeight(config.wallBalls.weight),
       order: 8,
     },
   ];
 
-  // Create 8 runs (1km each) - they alternate with stations
-  // Run order: 0 (before station 1), 2 (after station 1), 4, 6, 8, 10, 12, 14
-  const runs: Run[] = [
-    { id: 1, distance: '1km', order: 0 },
-    { id: 2, distance: '1km', order: 2 },
-    { id: 3, distance: '1km', order: 4 },
-    { id: 4, distance: '1km', order: 6 },
-    { id: 5, distance: '1km', order: 8 },
-    { id: 6, distance: '1km', order: 10 },
-    { id: 7, distance: '1km', order: 12 },
-    { id: 8, distance: '1km', order: 14 },
-  ];
+  // Filter out excluded stations
+  const stations = allStations.filter(
+    station => !excludeStations.includes(station.name as StationName)
+  );
+
+  // Get run configuration based on duration
+  const runConfig = DURATION_CONFIGS[duration];
+  
+  // Create runs based on duration
+  const runs: Run[] = [];
+  for (let i = 0; i < runConfig.runCount; i++) {
+    runs.push({
+      id: i + 1,
+      distance: runConfig.runDistance,
+      order: i * 2, // Runs alternate with stations (0, 2, 4, 6, etc.)
+    });
+  }
 
   // Return complete workout details
   return {
@@ -135,6 +239,10 @@ export function generateWorkout(
     stations,
     runs,
     generatedAt: new Date().toISOString(),
+    mood,
+    intensity,
+    duration,
+    excludedStations: excludeStations.length > 0 ? excludeStations : undefined,
   };
 }
 
