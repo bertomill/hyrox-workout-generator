@@ -8,7 +8,6 @@
  */
 
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { 
   WorkoutDetails, 
   FitnessLevel, 
@@ -66,15 +65,13 @@ export async function generateWorkoutWithAI(
   const prompt = buildWorkoutPrompt(fitnessLevel, mood, intensity, duration, excludeStations);
 
   try {
-    // Use Vercel AI SDK with gateway
+    // Use Vercel AI Gateway with plain string model identifier
+    // The AI Gateway automatically intercepts this and routes through the gateway
     const { object } = await generateObject({
-      model: openai('gpt-4o-mini'),
+      model: 'openai/gpt-4o-mini', // Format: provider/model-name
       schema: workoutSchema,
       prompt: prompt,
       system: `You are an expert Hyrox trainer and workout designer. You create personalized, safe, and effective Hyrox workouts based on the athlete's current state and goals. Always follow official Hyrox standards but adapt for the athlete's level and condition.`,
-      headers: {
-        'Authorization': `Bearer ${process.env.VERCEL_AI_GATEWAY_API_KEY}`,
-      },
     });
 
     console.log('✅ AI workout generated successfully');

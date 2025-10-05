@@ -69,9 +69,11 @@ See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 ### 🎉 Latest Updates (October 5, 2025)
 
 **Session 2 Complete - AI-Powered Smart Generation** ✅
-- ✅ **AI-Powered Generation:** OpenAI GPT-4o-mini generates truly adaptive workouts
+- ✅ **AI-Powered Generation:** Vercel AI Gateway + OpenAI GPT-4o-mini generates truly adaptive workouts
+- ✅ **Unified API:** Switch between AI providers (OpenAI, Anthropic, xAI) with minimal changes
 - ✅ **Intelligent Adaptation:** AI considers mood, intensity, fitness level, and preferences
 - ✅ **Fallback System:** Rule-based generation if AI unavailable
+- ✅ **Spend Monitoring:** Track AI usage and costs through Vercel dashboard
 - ✅ **API Auth Migration:** All routes use authenticated Supabase users with RLS
 - ✅ **Mood Selector:** Fresh / Normal / Tired / Exhausted
 - ✅ **Intensity Dial:** Light / Moderate / Hard / Beast Mode
