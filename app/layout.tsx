@@ -2,27 +2,27 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Hyrox Workout Generator - Train Smarter",
-  description: "Generate and track personalized Hyrox workouts. 8 stations, 8 runs, complete training sessions tailored to your fitness level.",
-  applicationName: "Hyrox Trainer",
+  title: "Roxify - Train Smarter for Hyrox",
+  description: "Roxify: Your adaptive Hyrox training companion. Generate smart workouts that adapt to your mood and performance. Track progress, compete with friends.",
+  applicationName: "Roxify",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Hyrox Trainer",
+    title: "Roxify",
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: "website",
-    siteName: "Hyrox Workout Generator",
-    title: "Hyrox Workout Generator - Train Smarter",
-    description: "Generate and track personalized Hyrox workouts",
+    siteName: "Roxify",
+    title: "Roxify - Train Smarter for Hyrox",
+    description: "Your adaptive Hyrox training companion",
   },
   twitter: {
     card: "summary",
-    title: "Hyrox Workout Generator",
-    description: "Generate and track personalized Hyrox workouts",
+    title: "Roxify - Train Smarter for Hyrox",
+    description: "Your adaptive Hyrox training companion",
   },
   manifest: "/manifest.json",
 };

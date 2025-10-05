@@ -1,8 +1,8 @@
 /**
- * History Page ^
+ * History Page ^`
  * 
- * Displays workout history with stats and list of all logged workouts. ^
- * Features Cal AI-inspired clean design with performance overview. ^
+ * Displays workout history with stats and list of all logged workouts. ^`
+ * Features Cal AI-inspired clean design with performance overview. ^`
  */
 
 'use client';
@@ -18,7 +18,7 @@ export default function HistoryPage() {
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   /**
-   * Fetches summary statistics ^
+   * Fetches summary statistics ^`
    */
   useEffect(() => {
     const fetchStats = async () => {
@@ -63,10 +63,10 @@ export default function HistoryPage() {
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content` */}
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         
-        {/* Stats Overview Cards */}
+        {/* Stats Overview Cards` */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatsCard
             label="Total Workouts"
@@ -95,12 +95,12 @@ export default function HistoryPage() {
           />
         </div>
 
-        {/* Progress Ring Overview - Visual Polish */}
+        {/* Progress Ring Overview - Visual Polish` */}
         {stats && stats.totalWorkouts > 0 && (
           <Card className="bg-gradient-to-br from-gray-50 to-white">
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row items-center justify-around gap-6">
-                {/* Completion Rate */}
+                {/* Completion Rate` */}
                 <div className="text-center">
                   <ProgressRing
                     progress={100}
@@ -116,7 +116,7 @@ export default function HistoryPage() {
                   <p className="text-xs text-gray-600 mt-2">Completion Rate</p>
                 </div>
 
-                {/* Progress vs Goal (example: 10 workouts goal) */}
+                {/* Progress vs Goal (example: 10 workouts goal`) */}
                 <div className="text-center">
                   <ProgressRing
                     progress={Math.min((stats.totalWorkouts / 10) * 100, 100)}
@@ -132,7 +132,7 @@ export default function HistoryPage() {
                   <p className="text-xs text-gray-600 mt-2">Monthly Goal</p>
                 </div>
 
-                {/* Consistency (based on streak) */}
+                {/* Consistency (based on streak)` */}
                 <div className="text-center">
                   <ProgressRing
                     progress={Math.min((stats.recentStreak / 7) * 100, 100)}
@@ -152,7 +152,7 @@ export default function HistoryPage() {
           </Card>
         )}
 
-        {/* Workout History Section */}
+        {/* Workout History Section` */}
         <Card>
           <CardHeader>
             <CardTitle>Recent Workouts</CardTitle>
@@ -162,7 +162,7 @@ export default function HistoryPage() {
           </CardContent>
         </Card>
 
-        {/* Info Banner */}
+        {/* Info Banner `*/}
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
           <p className="text-sm text-blue-900">
             💡 <span className="font-semibold">Tip:</span> Tap on any workout to expand and see detailed performance data for each station and run.
@@ -170,7 +170,7 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {/* Bottom Navigation */}
+      {/* Bottom Navigation `*/}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-around py-3">
@@ -196,14 +196,14 @@ export default function HistoryPage() {
         </div>
       </nav>
 
-      {/* Bottom padding to prevent content from being hidden by nav */}
+      {/* Bottom padding to prevent content from being hidden by nav` */}
       <div className="h-20" />
     </main>
   );
 }
 
 /**
- * Stats Card Component ^
+ * Stats Card Component` ^
  */
 interface StatsCardProps {
   label: string;

@@ -1,7 +1,7 @@
 {
-  "name": "Hyrox Workout Generator",
-  "short_name": "Hyrox Trainer",
-  "description": "Generate and track Hyrox workouts - 8 stations, 8 runs, personalized training",
+  "name": "Roxify - Train Smarter for Hyrox",
+  "short_name": "Roxify",
+  "description": "Your adaptive Hyrox training companion. Smart workouts that adapt to your mood and performance.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

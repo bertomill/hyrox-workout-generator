@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+# Roxify - Train Smarter for Hyrox
 Sitemap: https://hyrox-workout-generator-roan.vercel.app/sitemap.xml

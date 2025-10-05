@@ -1,7 +1,7 @@
 /**
  * Main Dashboard Page
  * 
- * Home page of the Hyrox Workout Generator app.
+ * Home page of Roxify - your adaptive Hyrox training companion.
  * Displays workout generation interface and shows the active/generated workout.
  * Mobile-first design following Cal AI aesthetic.
  */
@@ -61,8 +61,8 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Hyrox Trainer</h1>
-              <p className="text-sm text-gray-600">Your personal workout generator</p>
+              <h1 className="text-2xl font-bold text-gray-900">Roxify</h1>
+              <p className="text-sm text-gray-600">Train Smarter for Hyrox</p>
             </div>
             {/* Streak indicator (placeholder for future) */}
             <div className="flex items-center gap-1 text-[#F77F00]">
@@ -182,7 +182,7 @@ export default function HomePage() {
           </>
         )}
 
-        {/* Quick Stats Section */}
+        {/* Quick Stats Section` */}
         <Card>
           <CardHeader>
             <CardTitle>Quick Stats</CardTitle>
@@ -205,7 +205,7 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        {/* Info Banner */}
+        {/* Info Banner `*/}
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
           <p className="text-sm text-blue-900">
             <span className="font-semibold">What is Hyrox?</span> A fitness race combining running with 8 functional workout stations. 

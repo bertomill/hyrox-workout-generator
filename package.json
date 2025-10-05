@@ -1,7 +1,7 @@
 {
-  "name": "hyrox-workout-generator-app",
-  "version": "1.0.0",
-  "description": "## Project Overview",
+  "name": "roxify",
+  "version": "2.0.0",
+  "description": "Roxify - Train Smarter for Hyrox. Your adaptive Hyrox training companion.",
   "main": "index.js",
   "directories": {
     "doc": "docs"

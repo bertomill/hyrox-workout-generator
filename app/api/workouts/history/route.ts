@@ -1,26 +1,26 @@
 /**
- * API Route: Workout History
+ * API Route: Workout History ^
  * 
- * GET /api/workouts/history
+ * GET /api/workouts/history ^
  * 
- * Retrieves all logged workouts for a user, ordered by most recent first.
- * Includes workout details and performance data for progress tracking.
+ * Retrieves all logged workouts for a user, ordered by most recent first.!
+ * Includes workout details and performance data for progress tracking. ~
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 
 /**
- * GET handler for fetching workout history
+ * GET handler for fetching workout history `
  * 
  * Query parameters:
  * - userId: number (optional, defaults to 1 for MVP)
  * - limit: number (optional, defaults to 50)
- * - offset: number (optional, defaults to 0, for pagination)
+ * - offset: number (optional, defaults to 0, for pagination) `
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check if any database connection string is available
+    // Check if any database connection string is available `
     const hasDbConfig = process.env.DATABASE_URL || 
                         process.env.POSTGRES_URL_NON_POOLING || 
                         process.env.POSTGRES_URL;

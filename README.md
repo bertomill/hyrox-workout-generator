@@ -1,17 +1,26 @@
-# Hyrox Workout Generator App 💪⚡
+# Roxify 💪⚡
+## Train Smarter for Hyrox
 
-## Project Overview
-
-A dedicated, intelligent web application for Hyrox athletes to effectively plan and track their training. Generate personalized workouts, log performance data, and track your progress over time with beautiful, Cal AI-inspired design.
+Your adaptive Hyrox training companion. Generate smart workouts that respond to how you're feeling, track your performance, and compete with friends. Built with beautiful, Cal AI-inspired design.
 
 ### 🌐 Live Production App
-**URL:** https://hyrox-workout-generator-roan.vercel.app
+**URL:** https://hyrox-workout-generator-roan.vercel.app  
+*(Rebranded to Roxify - V2.0)*
 
-### ✨ Core Features (MVP - Complete!)
--   **Workout Generation Engine:** Generates Hyrox-specific workout plans with customization for beginner, intermediate, and advanced fitness levels
--   **Workout Logging & Tracking:** Log performance data for all 8 stations and 8 runs with MM:SS time inputs
--   **Progress Tracking:** View workout history, stats, and progress rings showing completion rates and streaks
--   **PWA Support:** Install as a Progressive Web App on iOS and Android for app-like experience
+### ✨ Core Features
+**MVP Complete (V1.0):**
+-   ✅ **Smart Workout Generation:** Hyrox-specific workouts for beginner, intermediate, and advanced athletes
+-   ✅ **Performance Logging:** Track all 8 stations and 8 runs with easy MM:SS time inputs
+-   ✅ **Progress Tracking:** Beautiful history view with stats and progress rings
+-   ✅ **PWA Support:** Install as a mobile app on iOS and Android
+
+**V2.0 In Progress:**
+-   🚀 **Adaptive Generation:** Workouts that adapt to your mood and energy levels
+-   🚀 **User Accounts:** Multi-user support with authentication
+-   🚀 **Social Features:** Connect with friends, leaderboards, and challenges
+-   🚀 **Advanced Analytics:** Deep performance insights and trend analysis
+-   🚀 **Training Plans:** Multi-week structured programs
+-   🚀 **Custom Templates:** Create and save your own workout templates
 
 ### 🛠️ Technical Stack
 -   **Frontend:** Next.js 15 with TypeScript, React 19
@@ -34,13 +43,24 @@ A dedicated, intelligent web application for Hyrox athletes to effectively plan 
 -   Standalone display mode
 -   App shortcuts for quick actions
 
-### 🚀 Development Status - ALL PHASES COMPLETE! ✅
+### 🚀 Development Status
+
+**V1.0 MVP - ALL PHASES COMPLETE! ✅**
 
 1.  ✅ **Phase 1: Foundation Setup** - Next.js 15, Tailwind CSS v4, Supabase PostgreSQL
 2.  ✅ **Phase 2: Workout Generation** - API routes, generator logic, UI components
 3.  ✅ **Phase 3: Workout Logging** - Performance tracking, time inputs, completion status
 4.  ✅ **Phase 4: Progress View** - History page, stats, workout cards
 5.  ✅ **Phase 5: Polish & Deploy** - PWA setup, progress rings, production deployment
+
+**V2.0 Roxify - IN PROGRESS 🔥**
+
+- ⏳ **Session 1:** Rebrand + Authentication (In Progress)
+- 📋 **Session 2:** Workout Management + Smart Generation
+- 📋 **Session 3:** Custom Templates + Analytics
+- 📋 **Future:** Social Features, Training Plans, Mobile Polish
+
+See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 ### 🎉 Latest Updates (October 5, 2025)
 
@@ -136,5 +156,8 @@ POSTGRES_URL_NON_POOLING=your_supabase_direct_connection_string
 
 ---
 
-**Built with ❤️ for the Hyrox community**
+---
+
+**Roxify - Built with ❤️ for the Hyrox community**  
+**Train Smarter. Perform Better. Compete Together.**
 
