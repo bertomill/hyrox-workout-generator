@@ -49,9 +49,10 @@ export async function generateWorkoutWithAI(
   userId: string,
   params?: Partial<WorkoutGenerationParams>
 ): Promise<WorkoutDetails | null> {
-  // Check if Vercel AI Gateway API key is configured
-  if (!process.env.VERCEL_AI_GATEWAY_API_KEY) {
-    console.warn('VERCEL_AI_GATEWAY_API_KEY not configured, falling back to rule-based generation');
+  // Check if AI Gateway API key is configured
+  // Note: Vercel AI SDK expects AI_GATEWAY_API_KEY (not VERCEL_AI_GATEWAY_API_KEY)
+  if (!process.env.AI_GATEWAY_API_KEY) {
+    console.warn('AI_GATEWAY_API_KEY not configured, falling back to rule-based generation');
     return null;
   }
 
