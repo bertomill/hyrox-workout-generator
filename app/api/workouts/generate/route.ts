@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate workout using the enhanced algorithm
-    const workoutDetails = generateWorkout(
+    // Generate workout using the AI-enhanced algorithm
+    const workoutDetails = await generateWorkout(
       fitnessLevel as FitnessLevel, 
       userId,
       {

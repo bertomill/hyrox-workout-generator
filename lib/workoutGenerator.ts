@@ -1,15 +1,16 @@
 /**
- * Enhanced Workout Generator Module (SESSION 2)
+ * Enhanced Workout Generator Module (SESSION 2 + AI Enhancement)
  * 
- * This module generates personalized Hyrox workouts based on multiple factors:
+ * This module generates personalized Hyrox workouts using:
+ * 1. AI-powered generation (OpenAI) - primary method
+ * 2. Rule-based generation - fallback if AI unavailable
+ * 
+ * Factors considered:
  * - Fitness level (beginner/intermediate/advanced)
  * - Mood (fresh/normal/tired/exhausted)
  * - Intensity preference (light/moderate/hard/beast)
  * - Duration (30/45/60/90 minutes)
  * - Station preferences (exclude certain exercises)
- * 
- * The algorithm adapts weights, distances, and run lengths based on these inputs
- * to create truly personalized, smart workouts.
  */
 
 import { 
@@ -23,6 +24,7 @@ import {
   StationName,
   WorkoutGenerationParams
 } from './types';
+import { generateWorkoutWithAI } from './aiWorkoutGenerator';
 
 /**
  * Station configurations by fitness level
@@ -98,12 +100,53 @@ const DURATION_CONFIGS: Record<WorkoutDuration, { runDistance: string; runCount:
 /**
  * Generates a complete Hyrox workout based on multiple parameters
  * 
+ * Attempts AI generation first, falls back to rule-based if AI fails.
+ * 
  * @param fitnessLevel - User's fitness level (beginner/intermediate/advanced)
  * @param userId - User ID (UUID from Supabase Auth)
  * @param params - Optional generation parameters (mood, intensity, duration, etc.)
  * @returns Complete workout details object
  */
-export function generateWorkout(
+export async function generateWorkout(
+  fitnessLevel: FitnessLevel,
+  userId: string,
+  params?: Partial<WorkoutGenerationParams>
+): Promise<WorkoutDetails> {
+  // Handle "Surprise Me" - randomize mood and intensity
+  if (params?.surpriseMe) {
+    const randomMood: MoodLevel = ['fresh', 'normal', 'tired', 'exhausted'][Math.floor(Math.random() * 4)] as MoodLevel;
+    const randomIntensity: IntensityLevel = ['light', 'moderate', 'hard', 'beast'][Math.floor(Math.random() * 4)] as IntensityLevel;
+    
+    // Recursively call with randomized parameters
+    return generateWorkout(fitnessLevel, userId, {
+      ...params,
+      mood: randomMood,
+      intensity: randomIntensity,
+      surpriseMe: false, // Prevent infinite loop
+    });
+  }
+
+  // Try AI generation first
+  try {
+    const aiWorkout = await generateWorkoutWithAI(fitnessLevel, userId, params);
+    if (aiWorkout) {
+      console.log('✅ Workout generated with AI');
+      return aiWorkout;
+    }
+  } catch (error) {
+    console.warn('AI generation failed, falling back to rule-based:', error);
+  }
+
+  // Fallback to rule-based generation
+  console.log('📋 Using rule-based workout generation');
+  return generateWorkoutRuleBased(fitnessLevel, userId, params);
+}
+
+/**
+ * Rule-based workout generation (fallback method)
+ * Original algorithm using multipliers and configurations
+ */
+function generateWorkoutRuleBased(
   fitnessLevel: FitnessLevel,
   userId: string,
   params?: Partial<WorkoutGenerationParams>
@@ -115,19 +158,6 @@ export function generateWorkout(
   const intensity = params?.intensity || 'moderate';
   const duration = params?.duration || 60;
   const excludeStations = params?.excludeStations || [];
-  const surpriseMe = params?.surpriseMe || false;
-
-  // If surprise me, randomize some parameters
-  if (surpriseMe) {
-    const randomMood: MoodLevel = ['fresh', 'normal', 'tired', 'exhausted'][Math.floor(Math.random() * 4)] as MoodLevel;
-    const randomIntensity: IntensityLevel = ['light', 'moderate', 'hard', 'beast'][Math.floor(Math.random() * 4)] as IntensityLevel;
-    return generateWorkout(fitnessLevel, userId, {
-      ...params,
-      mood: randomMood,
-      intensity: randomIntensity,
-      surpriseMe: false,
-    });
-  }
 
   // Calculate multipliers
   const moodMultiplier = MOOD_MULTIPLIERS[mood];

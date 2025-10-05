@@ -68,14 +68,16 @@ See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 ### 🎉 Latest Updates (October 5, 2025)
 
-**Session 2 Complete - Smart Workout Generation** ✅
+**Session 2 Complete - AI-Powered Smart Generation** ✅
+- ✅ **AI-Powered Generation:** OpenAI GPT-4o-mini generates truly adaptive workouts
+- ✅ **Intelligent Adaptation:** AI considers mood, intensity, fitness level, and preferences
+- ✅ **Fallback System:** Rule-based generation if AI unavailable
 - ✅ **API Auth Migration:** All routes use authenticated Supabase users with RLS
 - ✅ **Mood Selector:** Fresh / Normal / Tired / Exhausted
 - ✅ **Intensity Dial:** Light / Moderate / Hard / Beast Mode
 - ✅ **Duration Picker:** 30 / 45 / 60 / 90 minute workouts
 - ✅ **Station Preferences:** Exclude exercises you want to avoid
 - ✅ **"Surprise Me" Button:** Random adaptive generation
-- ✅ **Smart Algorithm:** Workouts adapt based on mood + intensity combinations
 - ✅ **Enhanced UI:** Cal AI-inspired design with smooth animations
 
 **Session 1 Complete - Rebrand + Authentication** ✅
@@ -152,7 +154,12 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 SUPABASE_JWT_SECRET=your_supabase_jwt_secret
+
+# OpenAI API (for AI-powered workout generation)
+OPENAI_API_KEY=your_openai_api_key
 ```
+
+**Note:** Without `OPENAI_API_KEY`, the app will fall back to rule-based workout generation (still functional!).
 
 ### 📱 Installing as PWA
 
