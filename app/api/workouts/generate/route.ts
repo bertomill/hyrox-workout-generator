@@ -59,11 +59,19 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
+    // Debug logging
+    console.log('🔐 Auth check:', { 
+      hasUser: !!user, 
+      userId: user?.id, 
+      authError: authError?.message 
+    });
+
     if (authError || !user) {
+      console.error('❌ Authentication failed:', authError?.message || 'No user found');
       return NextResponse.json(
         { 
           error: 'Unauthorized',
-          details: 'You must be logged in to generate workouts'
+          details: authError?.message || 'You must be logged in to generate workouts'
         },
         { 
           status: 401,
@@ -75,6 +83,8 @@ export async function POST(request: NextRequest) {
         }
       );
     }
+
+    console.log('✅ User authenticated:', user.email);
 
     // Parse request body
     const body = await request.json();
