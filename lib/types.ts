@@ -5,6 +5,7 @@ export type FitnessLevel = 'beginner' | 'intermediate' | 'advanced';
 export type WorkoutStatus = 'pending' | 'completed' | 'skipped';
 
 export interface HyroxStation {
+  id: number;
   name: string;
   distance?: string;
   reps?: string;
@@ -13,6 +14,7 @@ export interface HyroxStation {
 }
 
 export interface HyroxRun {
+  id: number;
   distance: string;
   order: number;
 }
@@ -21,7 +23,13 @@ export interface WorkoutDetails {
   fitnessLevel: FitnessLevel;
   stations: HyroxStation[];
   runs: HyroxRun[];
+  userId?: number;
+  generatedAt?: string;
 }
+
+// Aliases for convenience
+export type Station = HyroxStation;
+export type Run = HyroxRun;
 
 export interface StationPerformance {
   name: string;

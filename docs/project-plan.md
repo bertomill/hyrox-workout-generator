@@ -1,4 +1,4 @@
-# Hyrox Workout Generator - MVP Project Plan
+# Hyrox Workout Generator - MVP Project Plan ^ 
 
 **Version:** 1.0  
 **Created:** October 5, 2025  
@@ -14,14 +14,14 @@
 **Scope:** Core features only - workout generation and logging with basic progress tracking. ^
 
 **Success Criteria:**
-- User can generate a Hyrox workout based on fitness level
-- User can log workout results (station times, run times)
-- User can view basic workout history
-- App is deployed and accessible on mobile via PWA
+- User can generate a Hyrox workout based on fitness level ^ 
+- User can log workout results (station times, run times) ^ 
+- User can view basic workout history ^ 
+- App is deployed and accessible on mobile via PWA ^ 
 
 ---
 
-## Prerequisites (Already Complete ✅)
+## Prerequisites (Already Complete ✅) ^
 
 - [x] GitHub repository created and connected to Vercel
 - [x] PostgreSQL database provisioned and environment variables configured
@@ -35,7 +35,7 @@
 
 ### Phase 1: Foundation Setup (Est. 30 minutes)
 
-**Goal:** Initialize project infrastructure and basic structure
+**Goal:** Initialize project infrastructure and basic structure ^
 
 **Tasks:**
 1. **Initialize Next.js project**
@@ -69,7 +69,7 @@
 
 ### Phase 2: Core Feature - Workout Generation (Est. 45-60 minutes)
 
-**Goal:** Implement workout generation functionality
+**Goal:** Implement workout generation functionality ^ 
 
 **Tasks:**
 

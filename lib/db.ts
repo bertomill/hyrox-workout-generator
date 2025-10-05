@@ -1,12 +1,30 @@
 import { Pool } from 'pg';
 
 // Create a PostgreSQL connection pool
-// Connection string should be in DATABASE_URL environment variable
+// For Supabase, we prefer the non-pooling URL for better pg library compatibility
+// Fallback order: DATABASE_URL → POSTGRES_URL_NON_POOLING → POSTGRES_URL
+const connectionString = 
+  process.env.DATABASE_URL || 
+  process.env.POSTGRES_URL_NON_POOLING || 
+  process.env.POSTGRES_URL;
+
+if (!connectionString) {
+  throw new Error('No database connection string found in environment variables');
+}
+
+// Configure SSL for Supabase and other cloud databases
+// Remove sslmode parameter from connection string if present (we'll handle SSL in config)
+const cleanConnectionString = connectionString.replace(/[?&]sslmode=[^&]*/g, '');
+const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // Required for Supabase
-  },
+  connectionString: cleanConnectionString,
+  ssl: isLocalhost 
+    ? false 
+    : {
+        rejectUnauthorized: false, // Required for Supabase
+        require: true, // Force SSL connection
+      },
 });
 
 // Export query function for database operations
