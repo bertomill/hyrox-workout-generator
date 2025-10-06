@@ -20,6 +20,7 @@ import {
   Run
 } from './types';
 import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
 
 /**
  * Zod schema for AI workout response ^ 
@@ -43,6 +44,7 @@ const workoutSchema = z.object({
 
 /**
  * Generate workout using Vercel AI Gateway + OpenAI ^
+ * Now enhanced to use user's custom workouts as inspiration
  */
 export async function generateWorkoutWithAI(
   fitnessLevel: FitnessLevel,
@@ -62,8 +64,11 @@ export async function generateWorkoutWithAI(
   const duration = params?.duration || 60;
   const excludeStations = params?.excludeStations || [];
 
-  // Build the AI prompt
-  const prompt = buildWorkoutPrompt(fitnessLevel, mood, intensity, duration, excludeStations);
+  // Get user's custom workouts for inspiration
+  const customWorkouts = await getUserCustomWorkouts(userId);
+
+  // Build the AI prompt with custom workout context
+  const prompt = buildWorkoutPrompt(fitnessLevel, mood, intensity, duration, excludeStations, customWorkouts);
 
   try {
     // Use Vercel AI Gateway with plain string model identifier ^
@@ -96,14 +101,42 @@ export async function generateWorkoutWithAI(
 }
 
 /**
+ * Get user's custom workouts for AI inspiration
+ */
+async function getUserCustomWorkouts(userId: string): Promise<any[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('workouts')
+      .select('workout_name, description, tags, workout_details')
+      .eq('user_id', userId)
+      .eq('source', 'user_created')
+      .order('created_at', { ascending: false })
+      .limit(5); // Get last 5 custom workouts
+
+    if (error) {
+      console.warn('Error fetching custom workouts:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.warn('Error fetching custom workouts:', error);
+    return [];
+  }
+}
+
+/**
  * Build a detailed prompt for the AI ^
+ * Now enhanced with user's custom workout context
  */
 function buildWorkoutPrompt(
   fitnessLevel: FitnessLevel,
   mood: MoodLevel,
   intensity: IntensityLevel,
   duration: WorkoutDuration,
-  excludeStations: StationName[]
+  excludeStations: StationName[],
+  customWorkouts: any[] = []
 ): string {
   const moodDescriptions = {
     fresh: 'feeling fresh, fully recovered, high energy',
@@ -119,6 +152,21 @@ function buildWorkoutPrompt(
     beast: 'wants a beast mode, maximum effort session'
   };
 
+  // Build custom workout context
+  let customWorkoutContext = '';
+  if (customWorkouts.length > 0) {
+    customWorkoutContext = `
+
+**User's Custom Workout History (for inspiration):**
+${customWorkouts.map((workout, index) => `
+${index + 1}. "${workout.workout_name}" (${workout.tags?.join(', ') || 'no tags'})
+   - Description: ${workout.description || 'No description'}
+   - Stations: ${workout.workout_details?.stations?.map((s: any) => s.name).join(', ') || 'N/A'}
+`).join('')}
+
+Use these custom workouts as inspiration for creating variations and improvements. Consider the user's preferences and patterns from their custom workouts.`;
+  }
+
   return `Generate a personalized Hyrox workout with the following parameters:
 
 **Athlete Profile:**
@@ -128,7 +176,7 @@ function buildWorkoutPrompt(
 - Available Time: ${duration} minutes
 
 **Constraints:**
-${excludeStations.length > 0 ? `- MUST EXCLUDE these stations: ${excludeStations.join(', ')}` : '- No station exclusions'}
+${excludeStations.length > 0 ? `- MUST EXCLUDE these stations: ${excludeStations.join(', ')}` : '- No station exclusions'}${customWorkoutContext}
 
 **Standard Hyrox Stations (adjust as needed):**
 1. SkiErg - 1000m (cardio machine)

@@ -124,21 +124,21 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-light-bg-primary dark:bg-dark-bg-primary flex items-center justify-center">
-        <div className="text-light-text-secondary dark:text-dark-text-secondary">Loading...</div>
+      <div className="min-h-screen bg-light-bg-primary flex items-center justify-center">
+        <div className="text-light-text-secondary">Loading...</div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-200">
+    <main className="min-h-screen bg-light-bg-primary transition-colors duration-200">
       {/* Header */}
-      <header className="bg-light-bg-secondary dark:bg-dark-bg-secondary sticky top-0 z-30 backdrop-blur-sm shadow-sm">
+      <header className="bg-light-bg-secondary sticky top-0 z-30 backdrop-blur-sm shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary">Profile</h1>
-              <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary">
+              <h1 className="text-2xl font-bold text-light-text-primary">Profile</h1>
+              <p className="text-sm text-light-text-tertiary">
                 {user?.user_metadata?.name || user?.email}
               </p>
             </div>
@@ -168,7 +168,7 @@ export default function ProfilePage() {
                   className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     fitnessLevel === level
                       ? 'bg-primary text-white shadow-elevated dark:shadow-elevated-dark'
-                      : 'bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-secondary dark:text-dark-text-secondary hover:bg-light-border dark:hover:bg-dark-border'
+                      : 'bg-light-bg-tertiary text-light-text-secondary hover:bg-light-border'
                   }`}
                 >
                   {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -188,7 +188,7 @@ export default function ProfilePage() {
               value={goals}
               onChange={(e) => setGoals(e.target.value)}
               placeholder="What are your Hyrox goals? (e.g., Complete first race, improve time, build endurance...)"
-              className="w-full px-4 py-3 rounded-lg bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-primary dark:text-dark-text-primary placeholder-light-text-tertiary dark:placeholder-dark-text-tertiary border-0 focus:ring-2 focus:ring-primary resize-none"
+              className="w-full px-4 py-3 rounded-lg bg-light-bg-tertiary text-light-text-primary placeholder-light-text-tertiary border-0 focus:ring-2 focus:ring-primary resize-none"
               rows={4}
             />
           </CardContent>
@@ -198,20 +198,20 @@ export default function ProfilePage() {
         <Card>
           <CardHeader>
             <CardTitle>Default Workout Preferences</CardTitle>
-            <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary mt-1">
+            <p className="text-sm text-light-text-tertiary mt-1">
               These will be pre-selected when generating workouts (optional)
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Default Mood */}
             <div>
-              <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">
+              <label className="block text-sm font-medium text-light-text-secondary mb-2">
                 Default Mood
               </label>
               <select
                 value={defaultMood}
                 onChange={(e) => setDefaultMood(e.target.value as MoodLevel | '')}
-                className="w-full px-4 py-3 rounded-lg bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-primary dark:text-dark-text-primary border-0 focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 rounded-lg bg-light-bg-tertiary text-light-text-primary border-0 focus:ring-2 focus:ring-primary"
               >
                 <option value="">None (choose each time)</option>
                 <option value="fresh">Fresh 💪</option>
@@ -223,13 +223,13 @@ export default function ProfilePage() {
 
             {/* Default Intensity */}
             <div>
-              <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">
+              <label className="block text-sm font-medium text-light-text-secondary mb-2">
                 Default Intensity
               </label>
               <select
                 value={defaultIntensity}
                 onChange={(e) => setDefaultIntensity(e.target.value as IntensityLevel | '')}
-                className="w-full px-4 py-3 rounded-lg bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-primary dark:text-dark-text-primary border-0 focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 rounded-lg bg-light-bg-tertiary text-light-text-primary border-0 focus:ring-2 focus:ring-primary"
               >
                 <option value="">None (choose each time)</option>
                 <option value="light">Light ⚪</option>
@@ -241,7 +241,7 @@ export default function ProfilePage() {
 
             {/* Default Duration */}
             <div>
-              <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">
+              <label className="block text-sm font-medium text-light-text-secondary mb-2">
                 Default Duration
               </label>
               <div className="grid grid-cols-4 gap-3">
@@ -252,7 +252,7 @@ export default function ProfilePage() {
                     className={`px-3 py-2 rounded-lg font-medium transition-all ${
                       defaultDuration === duration
                         ? 'bg-primary text-white shadow-card dark:shadow-card-dark'
-                        : 'bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-secondary dark:text-dark-text-secondary'
+                        : 'bg-light-bg-tertiary text-light-text-secondary'
                     }`}
                   >
                     {duration}m
@@ -267,7 +267,7 @@ export default function ProfilePage() {
         <Card>
           <CardHeader>
             <CardTitle>Stations to Exclude</CardTitle>
-            <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary mt-1">
+            <p className="text-sm text-light-text-tertiary mt-1">
               Select exercises you want to avoid in your workouts
             </p>
           </CardHeader>
@@ -280,7 +280,7 @@ export default function ProfilePage() {
                   className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                     excludedStations.includes(station)
                       ? 'bg-error text-white shadow-card dark:shadow-card-dark'
-                      : 'bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-secondary dark:text-dark-text-secondary'
+                      : 'bg-light-bg-tertiary text-light-text-secondary'
                   }`}
                 >
                   {excludedStations.includes(station) ? '✕ ' : ''}{station}

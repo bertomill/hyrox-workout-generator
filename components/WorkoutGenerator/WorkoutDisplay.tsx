@@ -62,7 +62,7 @@ export function WorkoutDisplay({ workout }: WorkoutDisplayProps) {
           <CardTitle>Your Hyrox Workout</CardTitle>
           <FitnessLevelBadge level={fitnessLevel} />
         </div>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-light-text-secondary">
           Generated on {new Date(workout.dateGenerated).toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
@@ -75,19 +75,19 @@ export function WorkoutDisplay({ workout }: WorkoutDisplayProps) {
 
       <CardContent>
         {/* Workout Overview */}
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="mb-6 p-4 bg-light-bg-tertiary rounded-lg">
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-[#E63946]">8</div>
-              <div className="text-sm text-gray-600">Stations</div>
+              <div className="text-sm text-light-text-secondary">Stations</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-[#457B9D]">8</div>
-              <div className="text-sm text-gray-600">Runs</div>
+              <div className="text-sm text-light-text-secondary">Runs</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-900">8km</div>
-              <div className="text-sm text-gray-600">Total Running</div>
+              <div className="text-2xl font-bold text-light-text-primary">8km</div>
+              <div className="text-sm text-light-text-secondary">Total Running</div>
             </div>
           </div>
         </div>
@@ -109,8 +109,8 @@ export function WorkoutDisplay({ workout }: WorkoutDisplayProps) {
         </div>
 
         {/* Footer Info */}
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-          <p className="text-sm text-blue-900">
+        <div className="mt-6 p-4 rounded-lg border info-banner">
+          <p className="text-sm">
             💡 <span className="font-semibold">Pro Tip:</span> Complete all segments in order. 
             Pace yourself on the runs to maintain energy for the stations!
           </p>
@@ -144,7 +144,7 @@ function FitnessLevelBadge({ level }: { level: string }) {
  */
 function RunSegment({ run, sequenceNumber }: { run: Run; sequenceNumber: number }) {
   return (
-    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+    <div className="flex items-center gap-3 p-3 rounded-lg border info-banner">
       {/* Sequence Number */}
       <div className="flex-shrink-0 w-8 h-8 bg-[#457B9D] text-white rounded-full flex items-center justify-center font-semibold text-sm">
         {sequenceNumber}
@@ -159,12 +159,12 @@ function RunSegment({ run, sequenceNumber }: { run: Run; sequenceNumber: number 
 
       {/* Run Details */}
       <div className="flex-grow">
-        <div className="font-semibold text-gray-900">Run</div>
-        <div className="text-sm text-gray-600">{run.distance}</div>
+        <div className="font-semibold text-light-text-primary">Run</div>
+        <div className="text-sm text-light-text-secondary">{run.distance}</div>
       </div>
 
       {/* Run indicator */}
-      <div className="text-xs text-gray-500 font-mono">RUN</div>
+      <div className="text-xs text-light-text-tertiary font-mono">RUN</div>
     </div>
   );
 }
@@ -174,7 +174,7 @@ function RunSegment({ run, sequenceNumber }: { run: Run; sequenceNumber: number 
  */
 function StationSegment({ station, sequenceNumber }: { station: Station; sequenceNumber: number }) {
   return (
-    <div className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-[#E63946] transition-colors">
+    <div className="flex items-center gap-3 p-4 bg-light-bg-secondary rounded-lg border-2 border-light-border hover:border-[#E63946] transition-colors">
       {/* Sequence Number */}
       <div className="flex-shrink-0 w-8 h-8 bg-[#E63946] text-white rounded-full flex items-center justify-center font-semibold text-sm">
         {sequenceNumber}
@@ -187,16 +187,16 @@ function StationSegment({ station, sequenceNumber }: { station: Station; sequenc
 
       {/* Station Details */}
       <div className="flex-grow">
-        <div className="font-semibold text-gray-900 mb-0.5">{station.name}</div>
-        <div className="text-sm text-gray-600">
+        <div className="font-semibold text-light-text-primary mb-0.5">{station.name}</div>
+        <div className="text-sm text-light-text-secondary">
           {station.distance && <span>{station.distance}</span>}
           {station.reps && <span>{station.reps} reps</span>}
-          {station.weight && <span className="ml-2 text-gray-500">• {station.weight}</span>}
+          {station.weight && <span className="ml-2 text-light-text-tertiary">• {station.weight}</span>}
         </div>
       </div>
 
       {/* Station number indicator */}
-      <div className="text-xs text-gray-500 font-mono">
+      <div className="text-xs text-light-text-tertiary font-mono">
         STATION {station.order}
       </div>
     </div>

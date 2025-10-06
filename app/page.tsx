@@ -20,7 +20,6 @@ import { WorkoutDisplay } from '@/components/WorkoutGenerator/WorkoutDisplay';
 import { LogForm } from '@/components/WorkoutLogger/LogForm';
 
 // Dynamic import to prevent SSR issues with theme
-const ThemeToggle = dynamic(() => import('@/components/ui/ThemeToggle').then(mod => ({ default: mod.ThemeToggle })), { ssr: false });
 
 export default function HomePage() {
   const router = useRouter();
@@ -86,20 +85,19 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-200">
+    <main className="min-h-screen bg-light-bg-primary transition-colors duration-200">
       {/* Header */}
-      <header className="bg-light-bg-secondary dark:bg-dark-bg-secondary sticky top-0 z-30 backdrop-blur-sm shadow-sm">
+      <header className="bg-light-bg-secondary sticky top-0 z-30 backdrop-blur-sm shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary">Roxify</h1>
-              <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary">
+              <h1 className="text-2xl font-bold text-light-text-primary">Roxify</h1>
+              <p className="text-sm text-light-text-tertiary">
                 {user ? `Welcome, ${user.user_metadata?.name || user.email}` : 'Train Smarter for Hyrox'}
               </p>
             </div>
             {/* Auth Buttons & Theme Toggle */}
             <div className="flex items-center gap-2">
-              <ThemeToggle />
               {user && (
                 <Link href="/profile">
                   <Button variant="secondary" size="sm">
@@ -152,10 +150,10 @@ export default function HomePage() {
                   </svg>
                 </div>
                 
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                <h2 className="text-3xl font-bold text-light-text-primary mb-2">
                   Ready to Train?
                 </h2>
-                <p className="text-gray-600 max-w-md mx-auto">
+                <p className="text-light-text-secondary max-w-md mx-auto">
                   Generate a personalized Hyrox workout based on your fitness level. 
                   8 stations, 8 runs, one complete training session.
                 </p>
@@ -172,17 +170,17 @@ export default function HomePage() {
 
               {/* Info Cards */}
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
-                <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="p-4 bg-light-bg-tertiary rounded-lg">
                   <div className="text-[#E63946] font-bold text-2xl mb-1">8</div>
-                  <div className="text-sm text-gray-600">Functional Stations</div>
+                  <div className="text-sm text-light-text-secondary">Functional Stations</div>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="p-4 bg-light-bg-tertiary rounded-lg">
                   <div className="text-[#457B9D] font-bold text-2xl mb-1">8km</div>
-                  <div className="text-sm text-gray-600">Total Running</div>
+                  <div className="text-sm text-light-text-secondary">Total Running</div>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="text-gray-900 font-bold text-2xl mb-1">~60</div>
-                  <div className="text-sm text-gray-600">Minutes Average</div>
+                <div className="p-4 bg-light-bg-tertiary rounded-lg">
+                  <div className="text-light-text-primary font-bold text-2xl mb-1">~60</div>
+                  <div className="text-sm text-light-text-secondary">Minutes Average</div>
                 </div>
               </div>
             </CardContent>
@@ -194,8 +192,8 @@ export default function HomePage() {
               <>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900">Current Workout</h2>
-                    <p className="text-sm text-gray-600">
+                    <h2 className="text-xl font-semibold text-light-text-primary">Current Workout</h2>
+                    <p className="text-sm text-light-text-secondary">
                       {currentWorkout.status === 'completed' ? 'Completed!' : 'Ready to start training'}
                     </p>
                   </div>
@@ -222,15 +220,15 @@ export default function HomePage() {
                 
                 {/* Completion Badge */}
                 {currentWorkout.status === 'completed' && (
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200 flex items-center gap-3">
+                  <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 flex items-center gap-3">
                     <div className="w-10 h-10 bg-[#06D6A0] rounded-full flex items-center justify-center flex-shrink-0">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                     <div>
-                      <div className="font-semibold text-green-900">Workout Completed!</div>
-                      <div className="text-sm text-green-700">Great job! Check your progress to see your results.</div>
+                      <div className="font-semibold text-green-900 dark:text-green-100">Workout Completed!</div>
+                      <div className="text-sm text-green-700 dark:text-green-300">Great job! Check your progress to see your results.</div>
                     </div>
                   </div>
                 )}
@@ -254,24 +252,24 @@ export default function HomePage() {
           <CardContent>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-gray-900">{loggedWorkoutsCount}</div>
-                <div className="text-sm text-gray-600">Workouts</div>
+                <div className="text-2xl font-bold text-light-text-primary">{loggedWorkoutsCount}</div>
+                <div className="text-sm text-light-text-secondary">Workouts</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">—</div>
-                <div className="text-sm text-gray-600">Best Time</div>
+                <div className="text-2xl font-bold text-light-text-primary">—</div>
+                <div className="text-sm text-light-text-secondary">Best Time</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{loggedWorkoutsCount > 0 ? '1' : '0'}</div>
-                <div className="text-sm text-gray-600">Streak</div>
+                <div className="text-2xl font-bold text-light-text-primary">{loggedWorkoutsCount > 0 ? '1' : '0'}</div>
+                <div className="text-sm text-light-text-secondary">Streak</div>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Info Banner `*/}
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-          <p className="text-sm text-blue-900">
+        <div className="p-4 rounded-lg border info-banner">
+          <p className="text-sm inherit">
             <span className="font-semibold">What is Hyrox?</span> A fitness race combining running with 8 functional workout stations. 
             This app helps you train for it by generating structured workout sessions.
           </p>
@@ -292,7 +290,7 @@ export default function HomePage() {
       )}
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white z-30 shadow-lg">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-around py-3">
             <Link
@@ -306,12 +304,21 @@ export default function HomePage() {
             </Link>
             <Link
               href="/history"
-              className="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               <span className="text-xs">Progress</span>
+            </Link>
+            <Link
+              href="/my-workouts"
+              className="flex flex-col items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              <span className="text-xs">My Workouts</span>
             </Link>
           </div>
         </div>

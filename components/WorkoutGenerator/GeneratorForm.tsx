@@ -49,6 +49,7 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
   // UI state
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCustomize, setShowCustomize] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
 
@@ -204,51 +205,53 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
 
       {/* Modal container - slides up from bottom */}
       <div className="fixed inset-x-0 bottom-0 z-50 animate-slide-up max-h-[90vh] overflow-y-auto">
-        <div className="bg-white rounded-t-3xl shadow-2xl max-w-2xl mx-auto">
-          {/* Modal Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10 rounded-t-3xl">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Generate Workout</h2>
-              <p className="text-sm text-gray-500 mt-1">Adaptive Hyrox training</p>
-            </div>
-            <button
-              onClick={resetAndClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Close"
-            >
+    <div className="bg-white rounded-t-3xl shadow-2xl max-w-2xl mx-auto">
+      {/* Modal Header */}
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10 rounded-t-3xl">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Generate Workout</h2>
+          <p className="text-sm text-gray-600 mt-1">Adaptive Hyrox training</p>
+        </div>
+        <button
+          onClick={resetAndClose}
+          className="text-gray-600 hover:text-gray-900 transition-colors"
+          aria-label="Close"
+        >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          {/* Modal Body */}
-          <div className="p-6 space-y-6">
-            {/* Surprise Me Button - Featured */}
-            <div className="relative">
-              <button
-                onClick={handleSurpriseMe}
-                disabled={isGenerating}
-                className="w-full p-6 rounded-2xl bg-gradient-to-br from-[#E63946] to-[#F77F00] text-white font-bold text-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <div className="flex items-center justify-center gap-3">
-                  <span className="text-2xl">🎲</span>
-                  <span>Surprise Me!</span>
-                </div>
-                <p className="text-sm font-normal mt-1 opacity-90">Random adaptive workout</p>
-              </button>
-            </div>
+      {/* Modal Body */}
+      <div className="p-6 space-y-6 bg-white">
+            {/* Generate Button - Primary Action */}
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              onClick={handleGenerate}
+              isLoading={isGenerating}
+              disabled={isGenerating}
+            >
+              {isGenerating ? 'Generating...' : 'Generate Workout'}
+            </Button>
 
-            {/* Divider */}
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-px bg-gray-200"></div>
-              <span className="text-sm text-gray-500 font-medium">Or customize</span>
-              <div className="flex-1 h-px bg-gray-200"></div>
-            </div>
+        {/* Customize Toggle */}
+        <button
+          onClick={() => setShowCustomize(!showCustomize)}
+          className="w-full flex items-center justify-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors py-2"
+        >
+              <span>{showCustomize ? '▼' : '▶'}</span>
+              <span>{showCustomize ? 'Hide' : 'Customize'} Workout Options</span>
+            </button>
 
-            {/* Mood Selector */}
+            {/* Collapsible Customization Options */}
+            {showCustomize && (
+              <div className="space-y-6 pt-2">
+                {/* Mood Selector */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-sm font-semibold text-gray-900 mb-3">
                 💭 How are you feeling today?
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -285,7 +288,7 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
 
             {/* Intensity Slider */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-sm font-semibold text-gray-900 mb-3">
                 🔥 Intensity Level
               </label>
               <div className="grid grid-cols-4 gap-2">
@@ -322,7 +325,7 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
 
             {/* Duration Selector */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-sm font-semibold text-gray-900 mb-3">
                 ⏱️ Workout Duration
               </label>
               <div className="grid grid-cols-4 gap-2">
@@ -334,7 +337,7 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
                       px-4 py-3 rounded-xl font-medium transition-all duration-150
                       ${selectedDuration === duration
                         ? 'bg-[#E63946] text-white shadow-md'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                       }
                     `}
                   >
@@ -346,7 +349,7 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
 
             {/* Fitness Level Selection */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
+              <label className="block text-sm font-semibold text-gray-900 mb-3">
                 🎯 Fitness Level
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -375,39 +378,41 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
             <div>
               <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-primary transition-colors"
               >
                 <span>{showAdvanced ? '▼' : '▶'}</span>
                 <span>Station Preferences (Optional)</span>
               </button>
               
               {showAdvanced && (
-                <div className="mt-3 p-4 bg-gray-50 rounded-xl">
-                  <p className="text-xs text-gray-600 mb-3">Exclude stations you want to avoid:</p>
+                <div className="mt-3 p-4 bg-gray-100 rounded-xl">
+                  <p className="text-xs text-gray-700 mb-3">Exclude stations you want to avoid:</p>
                   <div className="grid grid-cols-2 gap-2">
                     {['SkiErg', 'Sled Push', 'Sled Pull', 'Burpee Broad Jumps', 'Rowing', 'Farmers Carry', 'Sandbag Lunges', 'Wall Balls'].map((station) => (
                       <label
                         key={station}
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-white transition-colors cursor-pointer"
+                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                       >
                         <input
                           type="checkbox"
                           checked={excludedStations.includes(station as StationName)}
                           onChange={() => toggleStation(station as StationName)}
-                          className="w-4 h-4 text-[#E63946] rounded border-gray-300 focus:ring-[#E63946]"
+                          className="w-4 h-4 text-[#E63946] rounded border-gray-200 focus:ring-[#E63946]"
                         />
-                        <span className="text-sm text-gray-700">{station}</span>
+                        <span className="text-sm text-gray-900">{station}</span>
                       </label>
                     ))}
                   </div>
                   {excludedStations.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-600 mt-2">
                       {excludedStations.length} station{excludedStations.length > 1 ? 's' : ''} excluded
                     </p>
                   )}
                 </div>
               )}
             </div>
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (
@@ -421,18 +426,6 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
                 </div>
               </div>
             )}
-
-            {/* Generate Button */}
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              onClick={handleGenerate}
-              isLoading={isGenerating}
-              disabled={isGenerating}
-            >
-              {isGenerating ? 'Generating...' : 'Generate Custom Workout'}
-            </Button>
           </div>
         </div>
       </div>
@@ -459,7 +452,7 @@ function MoodButton({ emoji, label, isSelected, onClick }: MoodButtonProps) {
         p-3 rounded-xl text-center transition-all duration-150
         ${isSelected
           ? 'bg-[#E63946] text-white shadow-md scale-105'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
         }
       `}
     >
@@ -488,7 +481,7 @@ function IntensityButton({ label, color, isSelected, onClick }: IntensityButtonP
         p-3 rounded-xl font-medium text-sm transition-all duration-150
         ${isSelected
           ? `${color} text-white shadow-md scale-105`
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
         }
       `}
     >
@@ -515,7 +508,7 @@ function FitnessButton({ label, isSelected, onClick }: FitnessButtonProps) {
         px-4 py-3 rounded-xl font-medium transition-all duration-150
         ${isSelected
           ? 'bg-[#E63946] text-white shadow-md'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
         }
       `}
     >

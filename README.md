@@ -22,6 +22,7 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 -   ✅ **Workout Management:** Edit workout notes, delete workouts with confirmation
 -   ✅ **Analytics & Charts:** Performance trends, PR detection, visual insights
 -   ✅ **User Profiles:** Save fitness level, goals, and default workout preferences
+-   ✅ **Dark Mode:** Full light/dark theme toggle with persistence and smooth transitions
 -   🚀 **Workout Templates:** Save and reuse custom workout templates
 -   🚀 **Workout Favorites:** Bookmark and filter favorite workouts
 -   🚀 **Social Features:** Connect with friends, leaderboards, and challenges
@@ -41,6 +42,7 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 -   **Accent Orange:** #F77F00
 -   **Success Green:** #06D6A0
 -   **Aesthetic:** Cal AI-inspired clean, modern UI with smooth animations
+-   **Dark Mode:** WHOOP-inspired dark theme with elegant charcoal backgrounds (#1F2937, #374151, #4B5563)
 
 ### 📱 PWA Features
 -   Installable on iOS (Add to Home Screen)
@@ -70,6 +72,24 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 ### 🎉 Latest Updates (October 5, 2025)
+
+**UI Simplification - Streamlined Workout Generator** ✅
+- ✅ **Removed "Surprise Me" Button:** Simplified to single "Generate Workout" action
+- ✅ **Collapsible Customization:** All options (mood, intensity, duration, fitness, stations) hidden by default
+- ✅ **Clean First Impression:** Users see one prominent button, can expand to customize if needed
+- ✅ **Progressive Disclosure:** Advanced options only shown when user wants to customize
+- ✅ **Faster Workflow:** One-click generation with smart defaults from user profile
+
+**UI Polish - Light Mode Only Design** ✅
+- ✅ **Cleaner Design:** Removed border line from bottom navigation bar
+- ✅ **Solid Modal Background:** Generate Workout modal uses clean white background for 100% opacity
+- ✅ **Perfect Contrast:** All text colors optimized for light mode with proper contrast ratios
+- ✅ **Readable Design:** Modal text is dark on light backgrounds for optimal readability
+- ✅ **Elevation Shadow:** Added subtle shadow for visual depth and separation
+- ✅ **Simplified Color System:** Light mode only approach for better user experience
+- ✅ **Consistent Styling:** All components use light mode colors for unified design
+- ✅ **Zero Transparency Issues:** Solid white backgrounds and readable text throughout
+- ✅ **Streamlined Navigation:** Clean white bottom navigation with proper contrast
 
 **Profile & Preferences** ✅
 - ✅ **User Profile Page:** Dedicated page to manage fitness level, goals, and preferences

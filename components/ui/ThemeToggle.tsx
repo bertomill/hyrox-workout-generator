@@ -21,14 +21,14 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-10 h-10 rounded-full bg-light-bg-tertiary dark:bg-dark-bg-tertiary" />
+      <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700" />
     );
   }
 
   return (
     <button
       onClick={toggleTheme}
-      className="relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 hover:scale-110 bg-light-bg-tertiary dark:bg-dark-bg-tertiary"
+      className="relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 hover:scale-110 bg-gray-100 dark:bg-gray-700"
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       {/* Sun Icon (Light Mode) */}

@@ -9,51 +9,51 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Roxify Brand Colors
-        primary: "#E63946",
-        secondary: "#457B9D",
-        accent: "#F77F00",
-        success: "#06D6A0",
-        warning: "#FCA311",
-        error: "#D62828",
+        // Roxify Brand Colors - Referenced from CSS variables
+        primary: "var(--color-primary)",
+        secondary: "var(--color-secondary)",
+        accent: "var(--color-accent)",
+        success: "var(--color-success)",
+        warning: "var(--color-warning)",
+        error: "var(--color-error)",
         
-        // WHOOP-Inspired Dark Mode Colors
+        // Dark Mode Colors - Referenced from CSS variables
         dark: {
           bg: {
-            primary: "#1F2937",   // Deep charcoal background
-            secondary: "#374151", // Card background
-            tertiary: "#4B5563",  // Elevated elements
+            primary: "var(--bg-primary)",
+            secondary: "var(--bg-secondary)",
+            tertiary: "var(--bg-tertiary)",
           },
           text: {
-            primary: "#F9FAFB",   // White/off-white
-            secondary: "#D1D5DB", // Light gray
-            tertiary: "#9CA3AF",  // Muted gray
+            primary: "var(--text-primary)",
+            secondary: "var(--text-secondary)",
+            tertiary: "var(--text-tertiary)",
           },
-          border: "#4B5563",      // Subtle borders
+          border: "var(--border)",
         },
         
-        // Light Mode Colors (refined)
+        // Light Mode Colors - Referenced from CSS variables
         light: {
           bg: {
-            primary: "#F9FAFB",   // Light gray background
-            secondary: "#FFFFFF", // Card background
-            tertiary: "#F3F4F6",  // Subtle backgrounds
+            primary: "var(--bg-primary)",
+            secondary: "var(--bg-secondary)",
+            tertiary: "var(--bg-tertiary)",
           },
           text: {
-            primary: "#111827",   // Near black
-            secondary: "#374151", // Dark gray
-            tertiary: "#6B7280",  // Medium gray
+            primary: "var(--text-primary)",
+            secondary: "var(--text-secondary)",
+            tertiary: "var(--text-tertiary)",
           },
-          border: "#E5E7EB",      // Light borders
+          border: "var(--border)",
         },
         
         // Data Visualization (work in both modes)
         chart: {
-          cyan: "#06D6A0",        // Bright cyan
-          blue: "#7EC8E3",        // Light blue
-          purple: "#A855F7",      // Purple
-          orange: "#FFB366",      // Orange
-          pink: "#FF6B6B",        // Coral/pink
+          cyan: "#06D6A0",
+          blue: "#7EC8E3",
+          purple: "#A855F7",
+          orange: "#FFB366",
+          pink: "#FF6B6B",
         },
       },
       

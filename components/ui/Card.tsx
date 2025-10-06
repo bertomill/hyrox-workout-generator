@@ -31,7 +31,7 @@ export function Card({
   ...props
 }: CardProps) {
   // iOS-style card - no borders, subtle shadow, dark mode support
-  const baseStyles = 'bg-light-bg-secondary dark:bg-dark-bg-secondary rounded-card shadow-card dark:shadow-card-dark';
+  const baseStyles = 'bg-light-bg-secondary rounded-card shadow-card dark:shadow-card-dark';
 
   // Interactive styles - adds hover and press effects
   const interactiveStyles = interactive
@@ -84,7 +84,7 @@ export function CardTitle({
   className?: string;
 }) {
   return (
-    <h3 className={`text-xl font-semibold text-light-text-primary dark:text-dark-text-primary ${className}`}>
+    <h3 className={`text-xl font-semibold text-light-text-primary ${className}`}>
       {children}
     </h3>
   );

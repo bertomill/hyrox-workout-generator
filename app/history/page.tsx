@@ -20,7 +20,6 @@ import { PRCard } from '@/components/Analytics/PRCard';
 import { prepareTrendData, getCurrentPRs, WorkoutAnalytics } from '@/lib/analytics';
 
 // Dynamic import to prevent SSR issues with theme
-const ThemeToggle = dynamic(() => import('@/components/ui/ThemeToggle').then(mod => ({ default: mod.ThemeToggle })), { ssr: false });
 
 export default function HistoryPage() {
   const [stats, setStats] = useState<any>(null);
@@ -61,23 +60,23 @@ export default function HistoryPage() {
   const prs = getCurrentPRs(workouts);
 
   return (
-    <main className="min-h-screen bg-light-bg-primary dark:bg-dark-bg-primary transition-colors duration-200">
+    <main className="min-h-screen bg-light-bg-primary transition-colors duration-200">
       {/* Header */}
-      <header className="bg-light-bg-secondary dark:bg-dark-bg-secondary sticky top-0 z-30 backdrop-blur-sm shadow-sm">
+      <header className="bg-light-bg-secondary sticky top-0 z-30 backdrop-blur-sm shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link
                 href="/"
-                className="text-light-text-tertiary dark:text-dark-text-tertiary hover:text-light-text-primary dark:hover:text-dark-text-primary transition-colors"
+                className="text-light-text-tertiary hover:text-light-text-primary transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary">Workout History</h1>
-                <p className="text-sm text-light-text-tertiary dark:text-dark-text-tertiary">Track your progress over time</p>
+                <h1 className="text-2xl font-bold text-light-text-primary">Workout History</h1>
+                <p className="text-sm text-light-text-tertiary">Track your progress over time</p>
               </div>
             </div>
             {/* Navigation & Theme Toggle */}
@@ -89,7 +88,6 @@ export default function HistoryPage() {
                   </Button>
                 </Link>
               )}
-              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -139,7 +137,7 @@ export default function HistoryPage() {
         {/* Personal Records Section */}
         {prs.overall && (
           <div className="space-y-3">
-            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-light-text-primary flex items-center gap-2">
               <span>🏆</span>
               Personal Records
             </h2>
@@ -160,7 +158,7 @@ export default function HistoryPage() {
 
         {/* Progress Ring Overview - Visual Polish */}
         {stats && stats.totalWorkouts > 0 && (
-          <Card className="bg-gradient-to-br from-gray-50 to-white">
+          <Card className="bg-gradient-to-br from-light-bg-tertiary to-light-bg-secondary dark:from-dark-bg-tertiary dark:to-dark-bg-secondary">
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row items-center justify-around gap-6">
                 {/* Completion Rate */}
@@ -172,11 +170,11 @@ export default function HistoryPage() {
                     color="#06D6A0"
                   >
                     <div className="text-center">
-                      <div className="text-xl font-bold text-gray-900">100%</div>
-                      <div className="text-xs text-gray-600">Complete</div>
+                      <div className="text-xl font-bold text-light-text-primary">100%</div>
+                      <div className="text-xs text-light-text-secondary">Complete</div>
                     </div>
                   </ProgressRing>
-                  <p className="text-xs text-gray-600 mt-2">Completion Rate</p>
+                  <p className="text-xs text-light-text-secondary mt-2">Completion Rate</p>
                 </div>
 
                 {/* Progress vs Goal (example: 10 workouts goal) */}
@@ -188,11 +186,11 @@ export default function HistoryPage() {
                     color="#E63946"
                   >
                     <div className="text-center">
-                      <div className="text-xl font-bold text-gray-900">{stats.totalWorkouts}</div>
-                      <div className="text-xs text-gray-600">of 10</div>
+                      <div className="text-xl font-bold text-light-text-primary">{stats.totalWorkouts}</div>
+                      <div className="text-xs text-light-text-secondary">of 10</div>
                     </div>
                   </ProgressRing>
-                  <p className="text-xs text-gray-600 mt-2">Monthly Goal</p>
+                  <p className="text-xs text-light-text-secondary mt-2">Monthly Goal</p>
                 </div>
 
                 {/* Consistency (based on streak) */}
@@ -204,11 +202,11 @@ export default function HistoryPage() {
                     color="#F77F00"
                   >
                     <div className="text-center">
-                      <div className="text-xl font-bold text-gray-900">{stats.recentStreak}</div>
-                      <div className="text-xs text-gray-600">days</div>
+                      <div className="text-xl font-bold text-light-text-primary">{stats.recentStreak}</div>
+                      <div className="text-xs text-light-text-secondary">days</div>
                     </div>
                   </ProgressRing>
-                  <p className="text-xs text-gray-600 mt-2">Streak</p>
+                  <p className="text-xs text-light-text-secondary mt-2">Streak</p>
                 </div>
               </div>
             </CardContent>
@@ -226,20 +224,20 @@ export default function HistoryPage() {
         </Card>
 
         {/* Info Banner */}
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-          <p className="text-sm text-blue-900">
+        <div className="p-4 rounded-lg border info-banner">
+          <p className="text-sm inherit">
             💡 <span className="font-semibold">Tip:</span> Tap on any workout to expand, edit notes, or see detailed performance data for each station and run.
           </p>
         </div>
       </div>
 
       {/* Bottom Navigation `*/}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white z-30 shadow-lg">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-around py-3">
             <Link
               href="/"
-              className="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors"
+              className="flex flex-col items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -254,6 +252,15 @@ export default function HistoryPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               <span className="text-xs">Progress</span>
+            </Link>
+            <Link
+              href="/my-workouts"
+              className="flex flex-col items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              <span className="text-xs">My Workouts</span>
             </Link>
           </div>
         </div>
@@ -278,17 +285,17 @@ interface StatsCardProps {
 
 function StatsCard({ label, value, icon, isLoading, highlight }: StatsCardProps) {
   return (
-    <Card className={highlight ? 'border-2 border-[#F77F00] bg-orange-50' : ''}>
+    <Card className={highlight ? 'border-2 border-[#F77F00] bg-orange-50 dark:bg-orange-900/20' : ''}>
       <CardContent className="p-4 text-center">
         <div className="text-2xl mb-1">{icon}</div>
         {isLoading ? (
           <div className="h-8 flex items-center justify-center">
-            <div className="animate-pulse bg-gray-200 h-6 w-16 rounded"></div>
+            <div className="animate-pulse bg-light-bg-tertiary h-6 w-16 rounded"></div>
           </div>
         ) : (
-          <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
+          <div className="text-2xl font-bold text-light-text-primary mb-1">{value}</div>
         )}
-        <div className="text-xs text-gray-600">{label}</div>
+        <div className="text-xs text-light-text-secondary">{label}</div>
       </CardContent>
     </Card>
   );
