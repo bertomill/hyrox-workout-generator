@@ -216,7 +216,10 @@ export default function HomePage() {
                     </Button>
                   </div>
                 </div>
-                <WorkoutDisplay workout={currentWorkout} />
+                <WorkoutDisplay 
+                  workout={currentWorkout} 
+                  onGenerateNew={() => setIsModalOpen(true)}
+                />
                 
                 {/* Completion Badge */}
                 {currentWorkout.status === 'completed' && (

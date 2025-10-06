@@ -22,6 +22,7 @@ import {
   MoodLevel, 
   IntensityLevel, 
   WorkoutDuration, 
+  WorkoutType,
   StationName 
 } from '@/lib/types';
 
@@ -41,9 +42,9 @@ export interface GeneratorFormProps {
 export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: GeneratorFormProps) {
   // Form state (initialized from profile)
   const [selectedLevel, setSelectedLevel] = useState<FitnessLevel>('intermediate');
-  const [selectedMood, setSelectedMood] = useState<MoodLevel>('normal');
   const [selectedIntensity, setSelectedIntensity] = useState<IntensityLevel>('moderate');
   const [selectedDuration, setSelectedDuration] = useState<WorkoutDuration>(60);
+  const [selectedWorkoutType, setSelectedWorkoutType] = useState<WorkoutType>('standard');
   const [excludedStations, setExcludedStations] = useState<StationName[]>([]);
   
   // UI state
@@ -52,6 +53,12 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
   const [showCustomize, setShowCustomize] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [workoutRecommendation, setWorkoutRecommendation] = useState<{
+    recommendation: WorkoutType | null;
+    message: string;
+    analysis: any;
+  } | null>(null);
 
   /**
    * Fetch user profile and set defaults
@@ -67,14 +74,12 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
         if (data.profile) {
           // Set form defaults from profile
           setSelectedLevel(data.profile.fitness_level || 'intermediate');
-          setSelectedMood(data.profile.default_mood || 'normal');
           setSelectedIntensity(data.profile.default_intensity || 'moderate');
           setSelectedDuration(data.profile.default_duration || 60);
           setExcludedStations(data.profile.excluded_stations || []);
         } else if (data.defaults) {
           // Use system defaults if no profile
           setSelectedLevel(data.defaults.fitness_level);
-          setSelectedMood(data.defaults.default_mood || 'normal');
           setSelectedIntensity(data.defaults.default_intensity || 'moderate');
           setSelectedDuration(data.defaults.default_duration);
           setExcludedStations(data.defaults.excluded_stations || []);
@@ -90,6 +95,37 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
 
     fetchProfile();
   }, [isOpen, profileLoaded]);
+
+  /**
+   * Fetch workout recommendations
+   */
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      try {
+        const response = await fetch('/api/workouts/recommend');
+        const data = await response.json();
+
+        if (data.success && data.analysis) {
+          setWorkoutRecommendation({
+            recommendation: data.analysis.recommendation,
+            message: data.analysis.message,
+            analysis: data.analysis
+          });
+
+          // Auto-select recommended workout type if available
+          if (data.analysis.recommendation) {
+            setSelectedWorkoutType(data.analysis.recommendation);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading workout recommendations:', error);
+      }
+    };
+
+    if (isOpen) {
+      loadRecommendations();
+    }
+  }, [isOpen]);
 
   /**
    * Handles the "Surprise Me" random generation
@@ -141,9 +177,9 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
         },
         body: JSON.stringify({
           fitnessLevel: selectedLevel,
-          mood: selectedMood,
           intensity: selectedIntensity,
           duration: selectedDuration,
+          workoutType: selectedWorkoutType,
           excludeStations: excludedStations.length > 0 ? excludedStations : undefined,
         }),
       });
@@ -155,7 +191,11 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
       }
 
       onWorkoutGenerated(data.workout);
-      resetAndClose();
+      setShowSuccess(true);
+      // Auto-close after 2 seconds
+      setTimeout(() => {
+        resetAndClose();
+      }, 2000);
     } catch (err) {
       console.error('Generation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to generate workout');
@@ -225,17 +265,42 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
 
       {/* Modal Body */}
       <div className="p-6 space-y-6 bg-white">
-            {/* Generate Button - Primary Action */}
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              onClick={handleGenerate}
-              isLoading={isGenerating}
-              disabled={isGenerating}
-            >
-              {isGenerating ? 'Generating...' : 'Generate Workout'}
-            </Button>
+        {/* Workout Recommendation Banner */}
+        {workoutRecommendation && workoutRecommendation.recommendation && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-blue-900 mb-1">
+                  💡 Smart Recommendation
+                </h4>
+                <p className="text-sm text-blue-800 mb-2">
+                  {workoutRecommendation.message}
+                </p>
+                <div className="text-xs text-blue-700">
+                  <strong>Selected:</strong> {workoutRecommendation.recommendation === 'recovery' ? 'Recovery' : 
+                    workoutRecommendation.recommendation === 'long_run' ? 'Long Run' : 'Standard'} workout
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Generate Button - Primary Action */}
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          onClick={handleGenerate}
+          isLoading={isGenerating}
+          disabled={isGenerating}
+        >
+          {isGenerating ? 'Generating...' : 'Generate Workout'}
+        </Button>
 
         {/* Customize Toggle */}
         <button
@@ -249,39 +314,36 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
             {/* Collapsible Customization Options */}
             {showCustomize && (
               <div className="space-y-6 pt-2">
-                {/* Mood Selector */}
+
+            {/* Workout Type Selector */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-3">
-                💭 How are you feeling today?
+                🎯 Workout Type
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <MoodButton
-                  mood="fresh"
-                  emoji="💪"
-                  label="Fresh"
-                  isSelected={selectedMood === 'fresh'}
-                  onClick={() => setSelectedMood('fresh')}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <WorkoutTypeButton
+                  type="standard"
+                  emoji="🏋️‍♂️"
+                  label="Standard"
+                  description="4-10 runs, 4-10 stations"
+                  isSelected={selectedWorkoutType === 'standard'}
+                  onClick={() => setSelectedWorkoutType('standard')}
                 />
-                <MoodButton
-                  mood="normal"
-                  emoji="😊"
-                  label="Normal"
-                  isSelected={selectedMood === 'normal'}
-                  onClick={() => setSelectedMood('normal')}
+                <WorkoutTypeButton
+                  type="recovery"
+                  emoji="🧘‍♂️"
+                  label="Recovery"
+                  description="2-4 runs, 2-4 stations"
+                  isSelected={selectedWorkoutType === 'recovery'}
+                  onClick={() => setSelectedWorkoutType('recovery')}
                 />
-                <MoodButton
-                  mood="tired"
-                  emoji="😴"
-                  label="Tired"
-                  isSelected={selectedMood === 'tired'}
-                  onClick={() => setSelectedMood('tired')}
-                />
-                <MoodButton
-                  mood="exhausted"
-                  emoji="🥵"
-                  label="Exhausted"
-                  isSelected={selectedMood === 'exhausted'}
-                  onClick={() => setSelectedMood('exhausted')}
+                <WorkoutTypeButton
+                  type="long_run"
+                  emoji="🏃‍♂️"
+                  label="Long Run"
+                  description="8-12 runs, 0-2 stations"
+                  isSelected={selectedWorkoutType === 'long_run'}
+                  onClick={() => setSelectedWorkoutType('long_run')}
                 />
               </div>
             </div>
@@ -388,7 +450,7 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
                 <div className="mt-3 p-4 bg-gray-100 rounded-xl">
                   <p className="text-xs text-gray-700 mb-3">Exclude stations you want to avoid:</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {['SkiErg', 'Sled Push', 'Sled Pull', 'Burpee Broad Jumps', 'Rowing', 'Farmers Carry', 'Sandbag Lunges', 'Wall Balls'].map((station) => (
+                    {['SkiErg', 'Sled Push', 'Sled Pull', 'Burpee Broad Jumps', 'Rowing', 'Farmers Carry', 'Sandbag Lunges', 'Wall Balls', 'Push-ups'].map((station) => (
                       <label
                         key={station}
                         className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
@@ -414,6 +476,29 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
               </div>
             )}
 
+            {/* Success Message */}
+            {showSuccess && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
+                <div className="flex items-start gap-2">
+                  <span className="text-lg">✅</span>
+                  <div className="flex-1">
+                    <p className="font-semibold">Workout Generated!</p>
+                    <p className="mt-1">Redirecting to your new workout...</p>
+                    <button
+                      onClick={() => {
+                        setShowSuccess(false);
+                        setError(null);
+                        handleGenerate();
+                      }}
+                      className="mt-3 px-4 py-2 bg-[#E63946] text-white rounded-lg text-sm font-semibold hover:bg-[#D62828] transition-colors"
+                    >
+                      Generate Another
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Error Message */}
             {error && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
@@ -436,28 +521,34 @@ export function GeneratorForm({ isOpen, onClose, onWorkoutGenerated }: Generator
 /**
  * Mood Button Component
  */
-interface MoodButtonProps {
-  mood: MoodLevel;
+
+/**
+ * Workout Type Button Component
+ */
+interface WorkoutTypeButtonProps {
+  type: WorkoutType;
   emoji: string;
   label: string;
+  description: string;
   isSelected: boolean;
   onClick: () => void;
 }
 
-function MoodButton({ emoji, label, isSelected, onClick }: MoodButtonProps) {
+function WorkoutTypeButton({ emoji, label, description, isSelected, onClick }: WorkoutTypeButtonProps) {
   return (
     <button
       onClick={onClick}
       className={`
-        p-3 rounded-xl text-center transition-all duration-150
+        p-4 rounded-xl text-left transition-all duration-150
         ${isSelected
           ? 'bg-[#E63946] text-white shadow-md scale-105'
           : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
         }
       `}
     >
-      <div className="text-2xl mb-1">{emoji}</div>
-      <div className="text-xs font-medium">{label}</div>
+      <div className="text-2xl mb-2">{emoji}</div>
+      <div className="text-sm font-semibold">{label}</div>
+      <div className="text-xs opacity-80 mt-1">{description}</div>
     </button>
   );
 }

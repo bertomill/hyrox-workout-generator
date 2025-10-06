@@ -7,6 +7,8 @@ export type MoodLevel = 'fresh' | 'normal' | 'tired' | 'exhausted';
 export type IntensityLevel = 'light' | 'moderate' | 'hard' | 'beast';
 export type WorkoutDuration = 30 | 45 | 60 | 90;
 
+export type WorkoutType = 'standard' | 'recovery' | 'long_run';
+
 // Station names for preferences
 export type StationName = 
   | 'SkiErg' 
@@ -16,13 +18,14 @@ export type StationName =
   | 'Rowing' 
   | 'Farmers Carry' 
   | 'Sandbag Lunges' 
-  | 'Wall Balls';
+  | 'Wall Balls'
+  | 'Push-ups';
 
 export interface WorkoutGenerationParams {
   fitnessLevel: FitnessLevel;
-  mood?: MoodLevel;
   intensity?: IntensityLevel;
   duration?: WorkoutDuration;
+  workoutType?: WorkoutType;
   excludeStations?: StationName[];
   surpriseMe?: boolean;
 }

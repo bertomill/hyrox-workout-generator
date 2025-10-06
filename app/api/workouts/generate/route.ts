@@ -21,7 +21,6 @@ import { createClient } from '@/lib/supabase/server';
  * Expected body:
  * {
  *   "fitnessLevel": "beginner" | "intermediate" | "advanced",
- *   "mood"?: "fresh" | "normal" | "tired" | "exhausted",
  *   "intensity"?: "light" | "moderate" | "hard" | "beast",
  *   "duration"?: 30 | 45 | 60 | 90,
  *   "excludeStations"?: string[],
@@ -90,9 +89,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { 
       fitnessLevel, 
-      mood, 
       intensity, 
       duration, 
+      workoutType,
       excludeStations, 
       surpriseMe 
     } = body;
@@ -120,9 +119,9 @@ export async function POST(request: NextRequest) {
       fitnessLevel as FitnessLevel, 
       userId,
       {
-        mood,
         intensity,
         duration,
+        workoutType,
         excludeStations,
         surpriseMe,
       }

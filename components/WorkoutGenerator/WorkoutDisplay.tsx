@@ -20,6 +20,8 @@ export interface WorkoutDisplayProps {
     dateGenerated: string;
     status: string;
   };
+  /** Optional callback for generating a new workout */
+  onGenerateNew?: () => void;
 }
 
 /**
@@ -28,7 +30,7 @@ export interface WorkoutDisplayProps {
  * Usage:
  * <WorkoutDisplay workout={generatedWorkout} />
  */
-export function WorkoutDisplay({ workout }: WorkoutDisplayProps) {
+export function WorkoutDisplay({ workout, onGenerateNew }: WorkoutDisplayProps) {
   const { workoutDetails } = workout;
   const { fitnessLevel, stations, runs } = workoutDetails;
 
@@ -78,15 +80,26 @@ export function WorkoutDisplay({ workout }: WorkoutDisplayProps) {
         <div className="mb-6 p-4 bg-light-bg-tertiary rounded-lg">
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-[#E63946]">8</div>
+              <div className="text-2xl font-bold text-[#E63946]">{stations.length}</div>
               <div className="text-sm text-light-text-secondary">Stations</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-[#457B9D]">8</div>
+              <div className="text-2xl font-bold text-[#457B9D]">{runs.length}</div>
               <div className="text-sm text-light-text-secondary">Runs</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-light-text-primary">8km</div>
+              <div className="text-2xl font-bold text-light-text-primary">
+                {runs.reduce((total, run) => {
+                  const distance = run.distance || '1km';
+                  // Handle both '1km' and '1000m' formats
+                  if (distance.includes('km')) {
+                    return total + parseFloat(distance.replace('km', ''));
+                  } else if (distance.includes('m')) {
+                    return total + parseFloat(distance.replace('m', '')) / 1000;
+                  }
+                  return total + 1; // Default to 1km if format is unclear
+                }, 0).toFixed(1)}km
+              </div>
               <div className="text-sm text-light-text-secondary">Total Running</div>
             </div>
           </div>
@@ -107,6 +120,21 @@ export function WorkoutDisplay({ workout }: WorkoutDisplayProps) {
             </div>
           ))}
         </div>
+
+        {/* Generate New Button */}
+        {onGenerateNew && (
+          <div className="mt-6">
+            <button
+              onClick={onGenerateNew}
+              className="w-full py-3 px-4 bg-[#E63946] text-white rounded-lg font-semibold hover:bg-[#D62828] transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Generate New Workout
+            </button>
+          </div>
+        )}
 
         {/* Footer Info */}
         <div className="mt-6 p-4 rounded-lg border info-banner">

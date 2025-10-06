@@ -41,7 +41,8 @@ const STATION_OPTIONS = [
   'Rowing',
   'Farmers Carry',
   'Sandbag Lunges',
-  'Wall Balls'
+  'Wall Balls',
+  'Push-ups'
 ];
 
 const TAG_OPTIONS = [
@@ -68,6 +69,7 @@ export function WorkoutBuilderForm({ isOpen, onClose, onSave, initialWorkout }: 
     { id: 7, order: 12, distance: '1km' },
     { id: 8, order: 14, distance: '1km' }
   ]);
+  const [numberOfRuns, setNumberOfRuns] = useState(initialWorkout?.workout_details?.runs?.length || 8);
   const [stations, setStations] = useState<Station[]>(initialWorkout?.workout_details?.stations || [
     { id: 1, name: 'SkiErg', order: 1, distance: '1000m' },
     { id: 2, name: 'Sled Push', order: 2, weight: '152kg', distance: '50m' },
@@ -112,6 +114,39 @@ export function WorkoutBuilderForm({ isOpen, onClose, onSave, initialWorkout }: 
         ? prev.filter(t => t !== tag)
         : [...prev, tag]
     );
+  };
+
+  const addRun = () => {
+    const newRun: Run = {
+      id: Math.max(...runs.map(r => r.id)) + 1,
+      order: runs.length * 2,
+      distance: '1km'
+    };
+    setRuns(prev => [...prev, newRun]);
+    setNumberOfRuns(prev => prev + 1);
+  };
+
+  const removeRun = (runId: number) => {
+    if (runs.length > 1) {
+      setRuns(prev => prev.filter(r => r.id !== runId));
+      setNumberOfRuns(prev => prev - 1);
+    }
+  };
+
+  const addStation = () => {
+    const newStation: Station = {
+      id: Math.max(...stations.map(s => s.id)) + 1,
+      name: 'SkiErg',
+      order: stations.length + 1,
+      distance: '1000m'
+    };
+    setStations(prev => [...prev, newStation]);
+  };
+
+  const removeStation = (stationId: number) => {
+    if (stations.length > 1) {
+      setStations(prev => prev.filter(s => s.id !== stationId));
+    }
   };
 
   if (!isOpen) return null;
@@ -191,7 +226,22 @@ export function WorkoutBuilderForm({ isOpen, onClose, onSave, initialWorkout }: 
 
           {/* Runs Section */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🏃‍♂️ Running Sections</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">🏃‍♂️ Running Sections</h3>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={addRun}
+                  variant="secondary"
+                  size="sm"
+                  className="text-xs"
+                >
+                  + Add Run
+                </Button>
+                <span className="text-sm text-gray-600">
+                  {runs.length} run{runs.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+            </div>
             <div className="space-y-3">
               {runs.map((run, index) => (
                 <div key={run.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
@@ -203,6 +253,17 @@ export function WorkoutBuilderForm({ isOpen, onClose, onSave, initialWorkout }: 
                     placeholder="Distance (e.g., 1km)"
                     className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#E63946] focus:border-transparent"
                   />
+                  {runs.length > 1 && (
+                    <button
+                      onClick={() => removeRun(run.id)}
+                      className="text-red-500 hover:text-red-700 transition-colors"
+                      aria-label="Remove run"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -210,7 +271,22 @@ export function WorkoutBuilderForm({ isOpen, onClose, onSave, initialWorkout }: 
 
           {/* Stations Section */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🏋️‍♂️ Functional Stations</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">🏋️‍♂️ Functional Stations</h3>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={addStation}
+                  variant="secondary"
+                  size="sm"
+                  className="text-xs"
+                >
+                  + Add Station
+                </Button>
+                <span className="text-sm text-gray-600">
+                  {stations.length} station{stations.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+            </div>
             <div className="space-y-4">
               {stations.map((station, index) => (
                 <Card key={station.id} className="p-4">
@@ -225,6 +301,17 @@ export function WorkoutBuilderForm({ isOpen, onClose, onSave, initialWorkout }: 
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
+                    {stations.length > 1 && (
+                      <button
+                        onClick={() => removeStation(station.id)}
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                        aria-label="Remove station"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">

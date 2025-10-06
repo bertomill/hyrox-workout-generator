@@ -14,6 +14,7 @@ import {
   MoodLevel,
   IntensityLevel,
   WorkoutDuration,
+  WorkoutType,
   StationName,
   WorkoutGenerationParams,
   Station,
@@ -59,16 +60,16 @@ export async function generateWorkoutWithAI(
   }
 
   // Extract parameters
-  const mood = params?.mood || 'normal';
   const intensity = params?.intensity || 'moderate';
   const duration = params?.duration || 60;
+  const workoutType = params?.workoutType || 'standard';
   const excludeStations = params?.excludeStations || [];
 
   // Get user's custom workouts for inspiration
   const customWorkouts = await getUserCustomWorkouts(userId);
 
   // Build the AI prompt with custom workout context
-  const prompt = buildWorkoutPrompt(fitnessLevel, mood, intensity, duration, excludeStations, customWorkouts);
+  const prompt = buildWorkoutPrompt(fitnessLevel, intensity, duration, workoutType, excludeStations, customWorkouts);
 
   try {
     // Use Vercel AI Gateway with plain string model identifier ^
@@ -87,9 +88,9 @@ export async function generateWorkoutWithAI(
       object,
       fitnessLevel,
       userId,
-      mood,
       intensity,
       duration,
+      workoutType,
       excludeStations
     );
 
@@ -105,7 +106,7 @@ export async function generateWorkoutWithAI(
  */
 async function getUserCustomWorkouts(userId: string): Promise<any[]> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('workouts')
       .select('workout_name, description, tags, workout_details')
@@ -132,24 +133,23 @@ async function getUserCustomWorkouts(userId: string): Promise<any[]> {
  */
 function buildWorkoutPrompt(
   fitnessLevel: FitnessLevel,
-  mood: MoodLevel,
   intensity: IntensityLevel,
   duration: WorkoutDuration,
+  workoutType: WorkoutType,
   excludeStations: StationName[],
   customWorkouts: any[] = []
 ): string {
-  const moodDescriptions = {
-    fresh: 'feeling fresh, fully recovered, high energy',
-    normal: 'feeling normal, ready for a standard workout',
-    tired: 'feeling tired, somewhat fatigued but can train',
-    exhausted: 'feeling exhausted, low energy, needs recovery-focused training'
-  };
-
   const intensityDescriptions = {
     light: 'wants a light, recovery-focused session',
     moderate: 'wants a moderate, balanced session',
     hard: 'wants a hard, challenging session',
     beast: 'wants a beast mode, maximum effort session'
+  };
+
+  const workoutTypeDescriptions = {
+    standard: 'Standard Hyrox workout with 4-10 runs and 4-10 stations (~60 minutes)',
+    recovery: 'Recovery day workout with 2-4 runs and 2-4 stations (~30 minutes)',
+    long_run: 'Long run workout with 8-12 runs and 0-2 stations (~90 minutes)'
   };
 
   // Build custom workout context
@@ -171,8 +171,8 @@ Use these custom workouts as inspiration for creating variations and improvement
 
 **Athlete Profile:**
 - Fitness Level: ${fitnessLevel}
-- Current Mood/Energy: ${moodDescriptions[mood]}
 - Desired Intensity: ${intensityDescriptions[intensity]}
+- Workout Type: ${workoutTypeDescriptions[workoutType]}
 - Available Time: ${duration} minutes
 
 **Constraints:**
@@ -187,6 +187,7 @@ ${excludeStations.length > 0 ? `- MUST EXCLUDE these stations: ${excludeStations
 6. Farmers Carry - 200m with kettlebells
 7. Sandbag Lunges - 100m with sandbag
 8. Wall Balls - 100 reps
+9. Push-ups - 100 reps (bodyweight)
 
 **Official Hyrox Weights by Level:**
 - Beginner: Sled Push 50kg, Sled Pull 70kg, Farmers 2x16kg, Sandbag 20kg, Wall Ball 4kg
@@ -196,15 +197,17 @@ ${excludeStations.length > 0 ? `- MUST EXCLUDE these stations: ${excludeStations
 **Your Task:**
 Create a workout that:
 1. KEEP standard Hyrox distances/weights (don't modify the official standards above)
-2. VARY the composition: select which stations to include based on mood and intensity
-   - Fresh + Hard/Beast: Include all 8 stations
-   - Normal + Moderate: Include 6-7 stations
-   - Tired + Light: Include 4-5 stations (focus on technique)
-   - Exhausted: Include 3-4 stations (recovery-focused)
-3. Adjust run distances to fit the ${duration} minute timeframe
-4. Respect the athlete's current energy state by varying volume (number of stations), not individual distances
+2. VARY the composition: select which stations to include based on intensity
+   - Hard/Beast: Include 6-8 stations
+   - Moderate: Include 4-6 stations
+   - Light: Include 3-4 stations (focus on technique)
+3. Adjust run distances AND NUMBER OF RUNS to fit the ${duration} minute timeframe:
+   - Short workouts (30min): 2-4 runs
+   - Medium workouts (45-60min): 4-8 runs  
+   - Long workouts (90min): 6-10 runs
+4. Respect the athlete's current energy state by varying volume (number of stations and runs), not individual distances
 5. Exclude any restricted stations
-6. Provide coaching notes explaining which stations were selected and why
+6. Provide coaching notes explaining which stations and run count were selected and why
 
 IMPORTANT: Each station should use its standard Hyrox distance/weight for the fitness level. Adjust the workout by including more or fewer stations, not by modifying individual exercise parameters.
 
@@ -218,9 +221,9 @@ function transformAIResponse(
   aiWorkout: z.infer<typeof workoutSchema>,
   fitnessLevel: FitnessLevel,
   userId: string,
-  mood: MoodLevel,
   intensity: IntensityLevel,
   duration: WorkoutDuration,
+  workoutType: WorkoutType,
   excludeStations: StationName[]
 ): WorkoutDetails {
   // Ensure stations have all required fields
@@ -246,7 +249,6 @@ function transformAIResponse(
     stations,
     runs,
     generatedAt: new Date().toISOString(),
-    mood,
     intensity,
     duration,
     excludedStations: excludeStations.length > 0 ? excludeStations : undefined,

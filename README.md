@@ -17,7 +17,7 @@ Your adaptive Hyrox training companion. Generate smart workouts that respond to 
 **V2.0 In Progress:**
 -   ✅ **User Accounts:** Multi-user support with Supabase Auth + Google OAuth
 -   ✅ **API Auth Migration:** All API routes use authenticated users (UUID-based, RLS enabled)
--   ✅ **Smart Workout Generation:** Mood selector, intensity dial, duration picker, station preferences
+-   ✅ **Smart Workout Generation:** Intensity dial, duration picker, station preferences
 -   ✅ **"Surprise Me" Feature:** Random adaptive workout generation
 -   ✅ **Workout Management:** Edit workout notes, delete workouts with confirmation
 -   ✅ **Analytics & Charts:** Performance trends, PR detection, visual insights
@@ -75,10 +75,13 @@ See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 **UI Simplification - Streamlined Workout Generator** ✅
 - ✅ **Removed "Surprise Me" Button:** Simplified to single "Generate Workout" action
-- ✅ **Collapsible Customization:** All options (mood, intensity, duration, fitness, stations) hidden by default
+- ✅ **Collapsible Customization:** All options (intensity, duration, fitness, stations) hidden by default
 - ✅ **Clean First Impression:** Users see one prominent button, can expand to customize if needed
 - ✅ **Progressive Disclosure:** Advanced options only shown when user wants to customize
 - ✅ **Faster Workflow:** One-click generation with smart defaults from user profile
+- ✅ **Quick Generate New:** "Generate New Workout" button in workout display + "Generate Another" in success state
+- ✅ **Workout Types:** Standard (4-10 runs/stations), Recovery (2-4 runs/stations), Long Run (8-12 runs, 0-2 stations)
+- ✅ **Smart Recommendations:** Analyzes workout patterns to suggest recovery (1 in 7 days) and long runs (1 in 4 days)
 
 **UI Polish - Light Mode Only Design** ✅
 - ✅ **Cleaner Design:** Removed border line from bottom navigation bar
@@ -93,7 +96,7 @@ See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 
 **Profile & Preferences** ✅
 - ✅ **User Profile Page:** Dedicated page to manage fitness level, goals, and preferences
-- ✅ **Workout Defaults:** Set default mood, intensity, duration for quick workout generation
+- ✅ **Workout Defaults:** Set default intensity, duration for quick workout generation
 - ✅ **Station Exclusions:** Save stations you want to avoid in all workouts
 - ✅ **Auto-Population:** Generator form automatically loads your preferences
 - ✅ **Profile Navigation:** Easy access from header on all pages
@@ -116,11 +119,10 @@ See [V2 Execution Roadmap](V2_EXECUTION_ROADMAP.md) for details.
 **Session 2 Complete - AI-Powered Smart Generation** ✅
 - ✅ **AI-Powered Generation:** Vercel AI Gateway + OpenAI GPT-4o-mini generates truly adaptive workouts
 - ✅ **Unified API:** Switch between AI providers (OpenAI, Anthropic, xAI) with minimal changes
-- ✅ **Intelligent Adaptation:** AI considers mood, intensity, fitness level, and preferences
+- ✅ **Intelligent Adaptation:** AI considers intensity, fitness level, and preferences
 - ✅ **Fallback System:** Rule-based generation if AI unavailable
 - ✅ **Spend Monitoring:** Track AI usage and costs through Vercel dashboard
 - ✅ **API Auth Migration:** All routes use authenticated Supabase users with RLS
-- ✅ **Mood Selector:** Fresh / Normal / Tired / Exhausted
 - ✅ **Intensity Dial:** Light / Moderate / Hard / Beast Mode
 - ✅ **Duration Picker:** 30 / 45 / 60 / 90 minute workouts
 - ✅ **Station Preferences:** Exclude exercises you want to avoid

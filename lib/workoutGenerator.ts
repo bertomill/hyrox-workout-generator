@@ -18,13 +18,14 @@ import {
   FitnessLevel, 
   Station, 
   Run, 
-  MoodLevel,
   IntensityLevel,
   WorkoutDuration,
+  WorkoutType,
   StationName,
   WorkoutGenerationParams
 } from './types';
 import { generateWorkoutWithAI } from './aiWorkoutGenerator';
+import { createClient } from '@/lib/supabase/server';
 
 /**
  * Station configurations by fitness level
@@ -64,14 +65,39 @@ const STATION_CONFIGS = {
 };
 
 /**
- * Mood and intensity affect COMPOSITION (which stations to include), not individual distances
+ * Workout type configurations for different training goals
+ */
+const WORKOUT_TYPE_CONFIGS: Record<WorkoutType, {
+  runCount: { min: number; max: number };
+  stationCount: { min: number; max: number };
+  targetDuration: number; // minutes
+}> = {
+  standard: {
+    runCount: { min: 4, max: 10 },
+    stationCount: { min: 4, max: 10 },
+    targetDuration: 60
+  },
+  recovery: {
+    runCount: { min: 2, max: 4 },
+    stationCount: { min: 2, max: 4 },
+    targetDuration: 30
+  },
+  long_run: {
+    runCount: { min: 8, max: 12 },
+    stationCount: { min: 0, max: 2 },
+    targetDuration: 90
+  }
+};
+
+/**
+ * Intensity affects COMPOSITION (which stations to include), not individual distances
  * This keeps Hyrox standards while varying workout volume
  */
-const STATION_SELECTION_CONFIG: Record<MoodLevel, Record<IntensityLevel, number>> = {
-  fresh: { light: 6, moderate: 7, hard: 8, beast: 8 },
-  normal: { light: 5, moderate: 6, hard: 7, beast: 8 },
-  tired: { light: 4, moderate: 5, hard: 6, beast: 7 },
-  exhausted: { light: 3, moderate: 4, hard: 5, beast: 6 },
+const STATION_SELECTION_CONFIG: Record<IntensityLevel, number> = {
+  light: 4,
+  moderate: 6,
+  hard: 7,
+  beast: 8,
 };
 
 /**
@@ -99,15 +125,13 @@ export async function generateWorkout(
   userId: string,
   params?: Partial<WorkoutGenerationParams>
 ): Promise<WorkoutDetails> {
-  // Handle "Surprise Me" - randomize mood and intensity
+  // Handle "Surprise Me" - randomize intensity
   if (params?.surpriseMe) {
-    const randomMood: MoodLevel = ['fresh', 'normal', 'tired', 'exhausted'][Math.floor(Math.random() * 4)] as MoodLevel;
     const randomIntensity: IntensityLevel = ['light', 'moderate', 'hard', 'beast'][Math.floor(Math.random() * 4)] as IntensityLevel;
     
     // Recursively call with randomized parameters
     return generateWorkout(fitnessLevel, userId, {
       ...params,
-      mood: randomMood,
       intensity: randomIntensity,
       surpriseMe: false, // Prevent infinite loop
     });
@@ -141,13 +165,17 @@ function generateWorkoutRuleBased(
   const config = STATION_CONFIGS[fitnessLevel];
   
   // Extract parameters with defaults
-  const mood = params?.mood || 'normal';
   const intensity = params?.intensity || 'moderate';
   const duration = params?.duration || 60;
+  const workoutType = params?.workoutType || 'standard';
   const excludeStations = params?.excludeStations || [];
 
-  // Determine how many stations to include based on mood + intensity
-  const stationCount = STATION_SELECTION_CONFIG[mood][intensity];
+  // Get workout type configuration
+  const typeConfig = WORKOUT_TYPE_CONFIGS[workoutType];
+  
+  // Determine run and station counts based on workout type
+  const runCount = Math.floor(Math.random() * (typeConfig.runCount.max - typeConfig.runCount.min + 1)) + typeConfig.runCount.min;
+  const stationCount = Math.floor(Math.random() * (typeConfig.stationCount.max - typeConfig.stationCount.min + 1)) + typeConfig.stationCount.min;
 
   // Build all 8 stations with STANDARD Hyrox distances/weights (no adjustments)
   const allStations: Station[] = [
@@ -218,9 +246,9 @@ function generateWorkoutRuleBased(
   // Get run configuration based on duration
   const runConfig = DURATION_CONFIGS[duration];
   
-  // Create runs based on duration
+  // Create runs based on workout type (not fixed at 8)
   const runs: Run[] = [];
-  for (let i = 0; i < runConfig.runCount; i++) {
+  for (let i = 0; i < runCount; i++) {
     runs.push({
       id: i + 1,
       distance: runConfig.runDistance,
@@ -235,7 +263,6 @@ function generateWorkoutRuleBased(
     stations,
     runs,
     generatedAt: new Date().toISOString(),
-    mood,
     intensity,
     duration,
     excludedStations: excludeStations.length > 0 ? excludeStations : undefined,
@@ -271,4 +298,68 @@ export function getStationDescription(stationName: string): string {
   };
 
   return descriptions[stationName] || 'Complete the prescribed distance or reps';
+}
+
+/**
+ * Analyze recent workout patterns and suggest appropriate workout type
+ */
+export async function getRecommendedWorkoutType(userId: string): Promise<WorkoutType | null> {
+  try {
+    const supabase = await createClient();
+    
+    // Get last 14 days of workouts to analyze patterns
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+    
+    const { data: recentWorkouts, error } = await supabase
+      .from('workouts')
+      .select('workout_details, created_at')
+      .eq('user_id', userId)
+      .gte('created_at', fourteenDaysAgo.toISOString())
+      .order('created_at', { ascending: false });
+
+    if (error || !recentWorkouts || recentWorkouts.length === 0) {
+      return null; // No recent workouts, no recommendation
+    }
+
+    // Analyze workout types from the last 14 days
+    const workoutTypes = recentWorkouts.map(workout => {
+      const details = workout.workout_details;
+      if (!details) return 'standard';
+      
+      // Determine workout type based on run/station counts
+      const runCount = details.runs?.length || 0;
+      const stationCount = details.stations?.length || 0;
+      
+      if (runCount >= 8 && stationCount <= 2) return 'long_run';
+      if (runCount <= 4 && stationCount <= 4) return 'recovery';
+      return 'standard';
+    });
+
+    // Count occurrences
+    const typeCounts = workoutTypes.reduce((acc, type) => {
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const totalWorkouts = workoutTypes.length;
+    const recoveryRatio = (typeCounts.recovery || 0) / totalWorkouts;
+    const longRunRatio = (typeCounts.long_run || 0) / totalWorkouts;
+
+    // Suggest recovery if less than 1 in 7 (14.3%)
+    if (recoveryRatio < 0.143) {
+      return 'recovery';
+    }
+
+    // Suggest long run if less than 1 in 4 (25%)
+    if (longRunRatio < 0.25) {
+      return 'long_run';
+    }
+
+    // Default to standard if patterns are balanced
+    return 'standard';
+  } catch (error) {
+    console.error('Error analyzing workout frequency:', error);
+    return null;
+  }
 }
